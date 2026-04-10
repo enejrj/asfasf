@@ -2,246 +2,156 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>💎 CRYPTO TAPPER | Автокликер без прокачки</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерактивный мир | Динамический фон и донаты</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #0a0f1e 0%, #0c1222 40%, #0a0a1a 100%);
-            background-attachment: fixed;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
-            padding: 16px;
-            position: relative;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            transition: background-color 1s ease;
         }
 
-        body::before {
-            content: '';
+        /* Динамический фон */
+        .background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.15), rgba(0,0,0,0)),
-                              radial-gradient(1px 1px at 60px 80px, rgba(255,215,0,0.2), rgba(0,0,0,0));
-            background-size: 200px 200px, 150px 150px;
-            background-repeat: repeat;
-            pointer-events: none;
+            z-index: -2;
+            transition: all 1s ease;
         }
 
-        .game-container {
-            max-width: 560px;
-            width: 100%;
-            background: rgba(10, 20, 35, 0.75);
-            backdrop-filter: blur(16px);
-            border-radius: 48px;
-            border: 1px solid rgba(255, 215, 0, 0.4);
-            padding: 20px;
-            position: relative;
-            z-index: 2;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(255,215,0,0.2);
-            max-height: 95vh;
-            overflow-y: auto;
-        }
-
-        .game-container::-webkit-scrollbar { width: 4px; }
-        .game-container::-webkit-scrollbar-track { background: #1a1a2e; border-radius: 10px; }
-        .game-container::-webkit-scrollbar-thumb { background: #ffd966; border-radius: 10px; }
-
-        body, body * {
-            color: #ffffff !important;
-        }
-        input::placeholder {
-            color: #aaaaaa !important;
-        }
-        .donate-btn {
-            color: #ffffff !important;
-        }
-
-        .location-bar, .stat-card, .upgrade-card, .donate-section, .missions-panel, 
-        .daily-card, .top-donors, .subscribe-card, .active-boosts-panel {
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 28px;
-            padding: 12px;
-            margin-bottom: 12px;
-            border: 1px solid rgba(255,215,0,0.25);
-        }
-
-        .secretary-area {
-            background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(30,20,50,0.6));
-            border-radius: 60px;
-            padding: 12px 18px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            border: 1px solid rgba(255,200,100,0.3);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        .secretary-avatar {
-            position: relative;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: linear-gradient(145deg, #ffd89b, #c7a252);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 0 3px #ffd966;
-            overflow: hidden;
-        }
-
-        .secretary-avatar img {
-            width: 100%;
-            height: auto;
+        /* Летающие объекты */
+        .floating-object {
             position: absolute;
-            bottom: -20px;
-            left: 0;
+            pointer-events: none;
+            z-index: -1;
+            animation: float 10s infinite ease-in-out;
         }
 
-        .secretary-text {
-            flex: 1;
-            font-size: 0.85rem;
-            background: rgba(0,0,0,0.6);
-            padding: 10px 14px;
-            border-radius: 35px;
-            border-left: 3px solid #ffd966;
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) translateX(0px) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-30px) translateX(20px) rotate(5deg);
+            }
+            50% {
+                transform: translateY(-50px) translateX(-15px) rotate(-5deg);
+            }
+            75% {
+                transform: translateY(-25px) translateX(25px) rotate(3deg);
+            }
         }
 
-        .stats {
+        /* Контейнер интерфейса */
+        .container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
             display: flex;
-            gap: 12px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: all 0.5s ease;
+        }
+
+        /* Карточка локации */
+        .location-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.5s ease;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .location-title {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .location-description {
+            font-size: 1.1em;
+            color: #666;
             margin-bottom: 20px;
         }
-        .stat-card {
-            flex: 1;
-            text-align: center;
-        }
-        .stat-card .value {
-            font-size: 1.6rem;
-            font-weight: bold;
+
+        .location-stats {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            margin-bottom: 20px;
         }
 
-        .tap-area {
-            background: radial-gradient(circle at 30% 20%, rgba(255,200,100,0.15), rgba(0,0,0,0.6));
-            margin: 15px 0;
-            border-radius: 80px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.05s linear;
-            border: 2px solid rgba(255,215,0,0.5);
-        }
-        .tap-area:active { transform: scale(0.97); }
-        .coin-image {
-            font-size: 5rem;
+        /* Кнопки */
+        .button-group {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: transform 0.05s;
-        }
-        .tap-area:active .coin-image { transform: scale(0.92); }
-        .per-tap {
-            background: rgba(0,0,0,0.7);
-            display: inline-block;
-            padding: 4px 20px;
-            border-radius: 50px;
-            margin-top: 8px;
-            font-size: 0.9rem;
-        }
-        .energy-bar-container {
-            background: #1e2a3a;
-            border-radius: 20px;
-            height: 8px;
-            margin-top: 12px;
-            overflow: hidden;
-        }
-        .energy-fill {
-            background: linear-gradient(90deg, #7bc5f9, #3a8fd4);
-            width: 100%;
-            height: 100%;
-            transition: width 0.2s;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
-        .upgrades-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin: 15px 0;
-        }
-        .upgrade-card {
-            text-align: center;
-            padding: 10px;
-        }
-        .upgrade-icon { font-size: 1.8rem; }
-        .upgrade-name { font-weight: bold; font-size: 0.8rem; }
-        .upgrade-price { font-size: 0.8rem; margin: 5px 0; }
-        button {
-            background: linear-gradient(135deg, #2a3b55, #1a2a40);
+        .btn {
+            padding: 12px 24px;
             border: none;
-            padding: 6px;
-            border-radius: 40px;
-            font-weight: bold;
+            border-radius: 10px;
+            font-size: 16px;
             cursor: pointer;
-            width: 100%;
-            transition: 0.1s;
+            transition: all 0.3s ease;
+            font-weight: 600;
         }
-        button:active { transform: scale(0.97); }
-        
-        .inventory-btn {
-            background: linear-gradient(135deg, #4c9aff, #2a5a9a);
-            margin-bottom: 12px;
-            padding: 10px;
-            font-size: 1rem;
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
         }
-        
-        .donate-buttons { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 10px 0; }
-        .donate-btn { background: #f0b429; width: auto; padding: 6px 12px; }
-        
-        .active-boosts-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-        .active-boost-item {
-            background: #2a3a55;
-            border-radius: 20px;
-            padding: 5px 10px;
-            font-size: 0.7rem;
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
-        
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-            margin-top: 10px;
-            font-size: 0.7rem;
-            text-align: center;
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
         }
-        .calendar-day {
-            background: #0a0f1e;
-            padding: 6px 2px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: 0.1s;
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(240, 147, 251, 0.3);
         }
-        .calendar-day.claimed { background: #2a5a3a; opacity: 0.6; cursor: default; }
-        .calendar-day.today { border: 2px solid #ffd966; box-shadow: 0 0 8px gold; }
-        .calendar-day.available:active { transform: scale(0.95); }
-        
-        .support-btn {
-            background: linear-gradient(135deg, #ff00cc, #6600ff);
-            font-size: 1rem;
-            padding: 10px;
+
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
         }
-        
+
+        /* Модальное окно для донатов */
         .modal {
             display: none;
             position: fixed;
@@ -249,684 +159,487 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(12px);
-            z-index: 3000;
-            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
             align-items: center;
+            justify-content: center;
         }
+
         .modal-content {
-            background: #0f1422ee;
-            border-radius: 48px;
-            padding: 24px;
-            max-width: 400px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
             width: 90%;
-            border: 2px solid #ffd966;
-            max-height: 70vh;
-            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+
+        .donation-options {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .donation-amount {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .donation-amount:hover, .donation-amount.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .custom-amount {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            animation: slideInRight 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            border-left: 4px solid #4caf50;
+        }
+
+        .notification.error {
+            border-left: 4px solid #f44336;
+        }
+
+        /* Счетчик донатов */
+        .donation-counter {
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 10px;
             text-align: center;
         }
-        .modal-content h3 {
-            margin-bottom: 16px;
+
+        @media (max-width: 768px) {
+            .location-title {
+                font-size: 1.8em;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
         }
-        .modal-inventory-item {
-            background: #1a1a2e;
-            border-radius: 28px;
-            padding: 10px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .close-modal {
-            background: #ff5555;
-            margin-top: 16px;
-            padding: 8px;
-        }
-        .double-btn {
-            background: linear-gradient(135deg, #f0b429, #d48a1a);
-            margin-top: 16px;
-            padding: 12px;
-            font-size: 1rem;
-        }
-        
-        .floating-number {
-            position: fixed;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #ffd966;
-            pointer-events: none;
-            animation: floatUp 0.6s forwards;
-            z-index: 1000;
-        }
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-60px) scale(1.3); }
-        }
-        .toast-notification {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1a1a2ecc;
-            backdrop-filter: blur(10px);
-            color: #ffd966;
-            padding: 10px 20px;
-            border-radius: 40px;
-            font-weight: bold;
-            z-index: 2000;
-            animation: fadeUp 2s forwards;
-            border: 1px solid #ffd966;
-        }
-        @keyframes fadeUp {
-            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
-            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
-            85% { opacity: 1; transform: translateX(-50%) translateY(0); }
-            100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-        }
-        hr { border-color: #ffd96633; margin: 8px 0; }
-        .timer-text { font-size: 0.7rem; font-family: monospace; }
     </style>
 </head>
 <body>
-<div class="game-container">
-    <div class="location-bar">
-        <div class="location-name" id="locationName">🏢 ОФИСНЫЙ ЭТАЖ</div>
-        <div class="location-progress" id="locationProgress">💎 0 / 2,000,000</div>
-        <div class="next-location" id="nextLocationHint">⭐ Следующая: 50,000 алмазов</div>
-    </div>
-
-    <div class="secretary-area">
-        <div class="secretary-avatar"><img src="https://image.cdn2.seaart.me/2024-01-31/cmsvvqde878c73965140/a4e2ae43dedb4d0503cb06bcb9b7a35759fd1ce1_high.webp" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"></div>
-        <div class="secretary-text" id="secretaryQuote">💎 Нажми на алмаз, чтобы начать путь к богатству!</div>
-    </div>
-
-    <div class="stats">
-        <div class="stat-card"><span>АЛМАЗЫ</span><div class="value" id="coinAmount">0</div></div>
-        <div class="stat-card"><span>ЭНЕРГИЯ</span><div class="value" id="energyAmount">100</div></div>
-    </div>
-
-    <div class="tap-area" id="tapButton">
-        <div class="coin-image">💎</div>
-        <div class="per-tap">+<span id="tapPower">1</span> за тап</div>
-        <div class="energy-bar-container"><div class="energy-fill" id="energyFill"></div></div>
-    </div>
-
-    <div class="active-boosts-panel">
-        <strong>✨ АКТИВНЫЕ БУСТЫ</strong>
-        <div id="activeBoostsList" class="active-boosts-grid">Нет активных бустов</div>
-    </div>
-
-    <button id="openInventoryBtn" class="inventory-btn">📦 ОТКРЫТЬ ИНВЕНТАРЬ</button>
-
-    <div class="upgrades-grid">
-        <div class="upgrade-card">
-            <div class="upgrade-icon">💪</div>
-            <div class="upgrade-name">Сила тапа +1</div>
-            <div class="upgrade-price" id="tapPrice">80 💎</div>
-            <button id="upgradeTap">Купить</button>
-        </div>
-        <div class="upgrade-card">
-            <div class="upgrade-icon">🔋</div>
-            <div class="upgrade-name">Энергия +10 (макс+10)</div>
-            <div class="upgrade-price" id="energyPrice">200 💎</div>
-            <button id="upgradeEnergy">Купить</button>
-        </div>
-        <div class="upgrade-card">
-            <div class="upgrade-icon">🤖</div>
-            <div class="upgrade-name">Автокликер</div>
-            <div class="upgrade-price" id="autoPrice">800 💎</div>
-            <button id="buyAuto">Купить</button>
-        </div>
-        <div class="upgrade-card">
-            <div class="upgrade-icon">✨</div>
-            <div class="upgrade-name">Крит x3</div>
-            <div class="upgrade-price" id="critPrice">1500 💎</div>
-            <button id="buyCrit">Купить</button>
-        </div>
-    </div>
-
-    <div class="calendar-panel">
-        <strong>📅 ЕЖЕМЕСЯЧНЫЕ НАГРАДЫ</strong>
-        <div id="calendarGrid" class="calendar-grid"></div>
-        <div id="dailyTimerText" class="timer-text" style="text-align:center; margin-top:8px;">🎁 Следующая награда: доступно</div>
-    </div>
-
-    <div class="donate-section">
-        <strong>💎 ДОНАТЫ ЗА TON (ПОЛУЧИТЕ БУСТЫ)</strong>
-        <div class="donate-buttons">
-            <button class="donate-btn" data-ton="0.5">0.5 TON (Колба x2 на 10мин)</button>
-            <button class="donate-btn" data-ton="1">1 TON (Колба x3 на 30мин)</button>
-            <button class="donate-btn" data-ton="2">2 TON (Колба без энергии 2мин)</button>
-            <button class="donate-btn" data-ton="5">5 TON (VIP + вечный x2)</button>
-        </div>
-    </div>
-
-    <div class="daily-card">
-        <span>🎁 ЕЖЕДНЕВНЫЙ БОНУС (КЛЮЧ)</span>
-        <button id="claimDailyBtn">Забрать 50💎 + Колба x2 10мин</button>
-    </div>
-
-    <div class="missions-panel">
-        <strong>📋 МИССИИ</strong>
-        <div id="missionsList"></div>
-    </div>
-
-    <div class="top-donors">
-        <strong>🏆 ТОП ДОНАТЕРОВ</strong>
-        <div id="topDonorsList">Пока никого</div>
-    </div>
-
-    <button id="supportButton" class="support-btn">❤️ ПОДДЕРЖАТЬ ПРОЕКТ</button>
-</div>
-
-<div id="inventoryModal" class="modal">
-    <div class="modal-content">
-        <h3>📦 ИНВЕНТАРЬ</h3>
-        <div id="modalInventoryList"></div>
-        <button id="closeInventoryModal" class="close-modal">ЗАКРЫТЬ</button>
-    </div>
-</div>
-
-<div id="offlineModal" class="modal">
-    <div class="modal-content">
-        <h3>💎 СЕКРЕТАРША СООБЩАЕТ 💎</h3>
-        <div id="offlineMessage" style="margin: 20px 0; font-size: 1.1rem;"></div>
-        <div id="offlineReward" style="font-size: 1.5rem; color: #ffd966; margin: 10px 0;"></div>
-        <button id="offlineCloseBtn" class="close-modal" style="background: #2a3b55;">ЗАБРАТЬ</button>
-        <button id="offlineDoubleBtn" class="double-btn">💰 УДВОИТЬ ЗА 2 TON</button>
-    </div>
-</div>
-
-<script>
-    const LOCATIONS = [
-        { name: "🏢 ОФИСНЫЙ ЭТАЖ", need: 0 },
-        { name: "🌆 НОЧНОЙ МЕГАПОЛИС", need: 50000 },
-        { name: "🚀 КОСМИЧЕСКАЯ СТАНЦИЯ", need: 200000 },
-        { name: "🤖 КИБЕРПАНК 2077", need: 600000 },
-        { name: "👑 ЗОЛОТОЙ ТРОН", need: 1200000 },
-        { name: "✨ ВЛАСТЕЛИН ВСЕЛЕННОЙ", need: 2000000 }
-    ];
-
-    let coins = parseInt(localStorage.getItem('coins') || '0');
-    let tapPower = parseInt(localStorage.getItem('tapPower') || '1');
-    let maxEnergy = parseInt(localStorage.getItem('maxEnergy') || '100');
-    let currentEnergy = parseInt(localStorage.getItem('currentEnergy') || '100');
-    let hasAutoClicker = localStorage.getItem('hasAutoClicker') === 'true';
-    let hasCrit = localStorage.getItem('hasCrit') === 'true';
-    let permanentBonusPower = parseInt(localStorage.getItem('permanentBonusPower') || '0');
-    let totalUpgrades = parseInt(localStorage.getItem('totalUpgrades') || '0');
-    let topDonors = JSON.parse(localStorage.getItem('topDonors') || '[]');
-    let noEnergyModeUntil = parseInt(localStorage.getItem('noEnergyModeUntil') || '0');
-
-    let tapLevel = parseInt(localStorage.getItem('tapLevel') || '0');
-    let energyLevel = parseInt(localStorage.getItem('energyLevel') || '0');
+    <div class="background" id="background"></div>
+    <div id="floatingObjects"></div>
     
-    function getTapPrice() { return Math.floor(80 * Math.pow(1.5, tapLevel)); }
-    function getEnergyPrice() { return Math.floor(200 * Math.pow(1.4, energyLevel)); }
-    const AUTO_CLICKER_PRICE = 800;
-    const CRIT_PRICE = 1500;
+    <div class="container">
+        <div class="location-card" id="locationCard">
+            <h1 class="location-title" id="locationTitle">Лесная поляна</h1>
+            <p class="location-description" id="locationDescription">Тихая лесная поляна, где поют птицы и шелестят листья</p>
+            <div class="location-stats" id="locationStats">
+                <div>🌡️ Температура: +22°C</div>
+                <div>🌤️ Погода: Солнечно</div>
+                <div>🐾 Активность: Спокойная</div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="changeLocation(-1)">◀ Предыдущая локация</button>
+                <button class="btn btn-primary" onclick="changeLocation(1)">Следующая локация ▶</button>
+            </div>
+            
+            <button class="btn btn-secondary" onclick="openDonationModal()">💝 Поддержать проект</button>
+            
+            <div class="donation-counter" id="donationCounter">
+                <strong>💰 Всего собрано донатов:</strong> <span id="totalDonations">0</span> ₽
+            </div>
+        </div>
+    </div>
 
-    let inventory = JSON.parse(localStorage.getItem('inventory') || '[{"id":"x2","name":"Колба x2","duration":600,"amount":0,"icon":"🧪"},{"id":"noenergy","name":"Колба без энергии","duration":120,"amount":0,"icon":"⚡"}]');
-    let activeBoosts = JSON.parse(localStorage.getItem('activeBoosts') || '[]');
+    <!-- Модальное окно донатов -->
+    <div id="donationModal" class="modal">
+        <div class="modal-content">
+            <h2>💝 Поддержать проект</h2>
+            <p>Выберите сумму доната:</p>
+            <div class="donation-options">
+                <div class="donation-amount" data-amount="100">100 ₽</div>
+                <div class="donation-amount" data-amount="500">500 ₽</div>
+                <div class="donation-amount" data-amount="1000">1000 ₽</div>
+                <div class="donation-amount" data-amount="5000">5000 ₽</div>
+            </div>
+            <input type="number" id="customAmount" class="custom-amount" placeholder="Или введите свою сумму (₽)">
+            <div class="button-group" style="margin-top: 20px;">
+                <button class="btn btn-primary" onclick="confirmDonation()">✅ Подтвердить донат</button>
+                <button class="btn btn-secondary" onclick="closeDonationModal()">❌ Отмена</button>
+            </div>
+        </div>
+    </div>
 
-    let calendarClaimed = JSON.parse(localStorage.getItem('calendarClaimed') || '{}');
-    let calendarMonth = localStorage.getItem('calendarMonth') || '';
-    let lastDailyRewardTime = parseInt(localStorage.getItem('lastDailyRewardTime') || '0');
+    <script>
+        // Локации с разными стилями
+        const locations = [
+            {
+                name: "🌲 Лесная поляна",
+                description: "Тихая лесная поляна, где поют птицы и шелестят листья",
+                stats: {
+                    temp: "+22°C",
+                    weather: "☀️ Солнечно",
+                    activity: "🐾 Спокойная"
+                },
+                bgGradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                bgColor: "#667eea"
+            },
+            {
+                name: "🏔️ Горная вершина",
+                description: "Величественные горы с захватывающими видами и свежим воздухом",
+                stats: {
+                    temp: "-5°C",
+                    weather: "❄️ Снегопад",
+                    activity: "⛷️ Активная"
+                },
+                bgGradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+                bgColor: "#f093fb"
+            },
+            {
+                name: "🏖️ Тропический пляж",
+                description: "Белый песок, пальмы и ласковое море",
+                stats: {
+                    temp: "+32°C",
+                    weather: "☀️ Жарко",
+                    activity: "🏊 Пляжная"
+                },
+                bgGradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+                bgColor: "#4facfe"
+            },
+            {
+                name: "🏙️ Мегаполис",
+                description: "Огни большого города, небоскребы и бесконечное движение",
+                stats: {
+                    temp: "+18°C",
+                    weather: "🌃 Ночь",
+                    activity: "💼 Деловая"
+                },
+                bgGradient: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
+                bgColor: "#43e97b"
+            },
+            {
+                name: "🏜️ Пустыня Сахара",
+                description: "Бескрайние песчаные дюны и жаркое солнце",
+                stats: {
+                    temp: "+45°C",
+                    weather: "🔥 Зной",
+                    activity: "🐫 Караванная"
+                },
+                bgGradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+                bgColor: "#fa709a"
+            },
+            {
+                name: "🌋 Вулканический остров",
+                description: "Действующий вулкан и лавовые реки",
+                stats: {
+                    temp: "+60°C",
+                    weather: "🌋 Извержение",
+                    activity: "🔥 Экстремальная"
+                },
+                bgGradient: "linear-gradient(135deg, #f12711 0%, #f5af19 100%)",
+                bgColor: "#f12711"
+            }
+        ];
 
-    let missions = {
-        tap500: { current: parseInt(localStorage.getItem('m_tap')||'0'), target: 500, reward: 500, claimed: false, desc: 'Сделать 500 тапов' },
-        upgrade10: { current: parseInt(localStorage.getItem('m_up')||'0'), target: 10, reward: 1000, claimed: false, desc: 'Купить 10 улучшений' },
-        donate1: { current: parseInt(localStorage.getItem('m_don')||'0'), target: 1, reward: 1500, claimed: false, desc: 'Сделать донат' }
-    };
-    Object.keys(missions).forEach(k => { missions[k].claimed = localStorage.getItem(`m_${k}_claimed`) === 'true'; });
+        let currentLocationIndex = 0;
+        let totalDonations = 0;
+        let selectedAmount = null;
+        let floatingObjects = [];
 
-    let pendingOfflineReward = 0;
-
-    function showToast(message, isError = false) {
-        let toast = document.createElement('div');
-        toast.className = 'toast-notification';
-        toast.style.background = isError ? '#4a1a2acc' : '#1a2a4acc';
-        toast.innerText = message;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 2000);
-    }
-
-    function saveAll() {
-        localStorage.setItem('coins', coins);
-        localStorage.setItem('tapPower', tapPower);
-        localStorage.setItem('maxEnergy', maxEnergy);
-        localStorage.setItem('currentEnergy', currentEnergy);
-        localStorage.setItem('hasAutoClicker', hasAutoClicker);
-        localStorage.setItem('hasCrit', hasCrit);
-        localStorage.setItem('permanentBonusPower', permanentBonusPower);
-        localStorage.setItem('totalUpgrades', totalUpgrades);
-        localStorage.setItem('topDonors', JSON.stringify(topDonors));
-        localStorage.setItem('inventory', JSON.stringify(inventory));
-        localStorage.setItem('activeBoosts', JSON.stringify(activeBoosts));
-        localStorage.setItem('calendarClaimed', JSON.stringify(calendarClaimed));
-        localStorage.setItem('calendarMonth', calendarMonth);
-        localStorage.setItem('lastDailyRewardTime', lastDailyRewardTime);
-        localStorage.setItem('noEnergyModeUntil', noEnergyModeUntil);
-        localStorage.setItem('tapLevel', tapLevel);
-        localStorage.setItem('energyLevel', energyLevel);
-        localStorage.setItem('m_tap', missions.tap500.current);
-        localStorage.setItem('m_up', missions.upgrade10.current);
-        localStorage.setItem('m_don', missions.donate1.current);
-        localStorage.setItem('m_tap500_claimed', missions.tap500.claimed);
-        localStorage.setItem('m_upgrade10_claimed', missions.upgrade10.claimed);
-        localStorage.setItem('m_donate1_claimed', missions.donate1.claimed);
-        updateUI();
-    }
-
-    function getMultiplier() {
-        let mult = 1;
-        for(let b of activeBoosts) if(b.id === 'x2' && b.expireTime > Date.now()) mult *= 2;
-        for(let b of activeBoosts) if(b.id === 'x3' && b.expireTime > Date.now()) mult *= 3;
-        if(localStorage.getItem('vip') === 'true') mult *= 2;
-        return mult;
-    }
-
-    function getCurrentTapPower() {
-        return (tapPower + permanentBonusPower) * getMultiplier();
-    }
-
-    function addCoins(amount) {
-        coins += amount;
-        saveAll();
-        checkLocationUnlock();
-    }
-
-    function spendEnergy(cost=1) {
-        if(noEnergyModeUntil > Date.now()) return true;
-        if(currentEnergy >= cost) {
-            currentEnergy -= cost;
-            saveAll();
-            return true;
-        }
-        return false;
-    }
-
-    function addBoostToInventory(boostId, boostName, durationSec, icon) {
-        let item = inventory.find(i => i.id === boostId);
-        if(item) item.amount++;
-        else inventory.push({ id: boostId, name: boostName, duration: durationSec, amount: 1, icon: icon });
-        saveAll();
-        showToast(`🎁 Получен буст: ${boostName}!`, false);
-    }
-
-    function useBoost(boostId) {
-        let item = inventory.find(i => i.id === boostId);
-        if(!item || item.amount <= 0) return showToast("Нет бустов!", true);
-        
-        if(boostId === 'noenergy') {
-            noEnergyModeUntil = Date.now() + item.duration * 1000;
-            item.amount--;
-            showToast(`⚡ Активирована КОЛБА БЕЗ ЭНЕРГИИ на ${item.duration/60} мин!`, false);
-            saveAll();
-            updateUI();
-            return;
-        }
-        
-        item.amount--;
-        let existing = activeBoosts.find(b => b.id === boostId);
-        if(existing) existing.expireTime = Date.now() + item.duration * 1000;
-        else activeBoosts.push({ id: boostId, expireTime: Date.now() + item.duration * 1000 });
-        saveAll();
-        showToast(`✅ Активирован ${item.name} на ${item.duration/60} мин!`, false);
-        updateUI();
-    }
-
-    function initCalendar() {
-        let now = new Date();
-        let currentMonthKey = `${now.getFullYear()}-${now.getMonth()}`;
-        if(calendarMonth !== currentMonthKey) {
-            calendarMonth = currentMonthKey;
-            calendarClaimed = {};
-            saveAll();
-        }
-        let daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
-        let firstDay = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
-        return { daysInMonth, firstDay };
-    }
-
-    function claimCalendarDay(day) {
-        let today = new Date().getDate();
-        if(day > today) return showToast("Этот день ещё не наступил!", true);
-        if(calendarClaimed[day]) return showToast("Награда за этот день уже получена!", true);
-        
-        let reward = 40 + day * 3;
-        addCoins(reward);
-        showToast(`🎉 Вы получили ${reward} алмазов за ${day} день месяца!`, false);
-        
-        if(day === 5) addBoostToInventory('x2', 'Колба x2', 600, '🧪');
-        if(day === 10) addBoostToInventory('noenergy', 'Колба без энергии', 120, '⚡');
-        if(day === 15) addBoostToInventory('x3', 'Колба x3', 1800, '🧪');
-        if(day === 20) addBoostToInventory('noenergy', 'Колба без энергии', 120, '⚡');
-        if(day === 25) addBoostToInventory('x2', 'Колба x2', 600, '🧪');
-        if(day === 30) { addCoins(200); addBoostToInventory('noenergy', 'Колба без энергии', 120, '⚡'); showToast("✨ Мега-награда! +200 алмазов и колба!", false); }
-        
-        calendarClaimed[day] = true;
-        saveAll();
-        updateUI();
-    }
-
-    function claimDailyKey() {
-        let now = Date.now();
-        if(now - lastDailyRewardTime < 86400000) {
-            let hoursLeft = Math.ceil((86400000 - (now - lastDailyRewardTime)) / 3600000);
-            return showToast(`⏳ Следующий бонус через ${hoursLeft} часов!`, true);
-        }
-        lastDailyRewardTime = now;
-        addCoins(50);
-        addBoostToInventory('x2', 'Колба x2', 600, '🧪');
-        showToast("🎁 Вы получили 50 алмазов и Колбу x2 на 10 минут!", false);
-        saveAll();
-        updateUI();
-    }
-
-    function checkLocationUnlock() {
-        let currentLoc = 0;
-        for(let i=LOCATIONS.length-1; i>=0; i--) if(coins >= LOCATIONS[i].need) currentLoc = i;
-        if(currentLoc >= 1 && !localStorage.getItem('loc1')) { localStorage.setItem('loc1','1'); addCoins(10000); showToast("🌆 Открыт НОЧНОЙ МЕГАПОЛИС! +10000 алмазов", false); }
-        if(currentLoc >= 2 && !localStorage.getItem('loc2')) { localStorage.setItem('loc2','1'); addCoins(30000); showToast("🚀 КОСМИЧЕСКАЯ СТАНЦИЯ! +30000", false); }
-        if(currentLoc >= 3 && !localStorage.getItem('loc3')) { localStorage.setItem('loc3','1'); addCoins(80000); showToast("🤖 КИБЕРПАНК! +80000", false); }
-        if(currentLoc >= 4 && !localStorage.getItem('loc4')) { localStorage.setItem('loc4','1'); addCoins(150000); showToast("👑 ЗОЛОТОЙ ТРОН! +150000", false); }
-        if(currentLoc >= 5 && !localStorage.getItem('loc5')) { localStorage.setItem('loc5','1'); addCoins(300000); showToast("✨ ВЛАСТЕЛИН ВСЕЛЕННОЙ! +300000", false); }
-    }
-
-    // АВТОКЛИКЕР (работает, если куплен, сила равна текущей силе тапа)
-    setInterval(() => {
-        if(hasAutoClicker && spendEnergy(1)) {
-            let autoAmount = getCurrentTapPower();
-            addCoins(autoAmount);
-            updateUI();
-        }
-    }, 5000);
-
-    setInterval(() => {
-        if(currentEnergy < maxEnergy) {
-            currentEnergy = Math.min(maxEnergy, currentEnergy + 1);
-            saveAll();
-            updateUI();
-        }
-    }, 15000);
-
-    setInterval(() => { updateUI(); }, 1000);
-
-    let clickCounter = 0;
-    const praises = ["💎 Блестящий удар!", "🔥 Ты невероятен!", "⭐ Алмазы сами летят!", "💪 Мощь титана!", "👑 Королевский тап!", "✨ Гениально!", "🎉 Легендарно!"];
-    function praise() { document.getElementById('secretaryQuote').innerHTML = praises[Math.floor(Math.random()*praises.length)]; }
-
-    function updateUI() {
-        let currentLoc = 0;
-        for(let i=LOCATIONS.length-1; i>=0; i--) if(coins >= LOCATIONS[i].need) currentLoc = i;
-        let nextLoc = currentLoc+1 < LOCATIONS.length ? LOCATIONS[currentLoc+1] : null;
-        document.getElementById('locationName').innerHTML = LOCATIONS[currentLoc].name;
-        document.getElementById('locationProgress').innerHTML = `💎 ${Math.floor(coins).toLocaleString()} / ${nextLoc ? nextLoc.need.toLocaleString() : '2,000,000 ДОСТИГНУТО!'}`;
-        document.getElementById('nextLocationHint').innerHTML = nextLoc ? `⭐ Следующая: ${nextLoc.name} (${nextLoc.need.toLocaleString()} алмазов)` : "🏆 АБСОЛЮТНАЯ ПОБЕДА!";
-        document.getElementById('coinAmount').innerHTML = Math.floor(coins).toLocaleString();
-        document.getElementById('tapPower').innerHTML = Math.floor(getCurrentTapPower());
-        document.getElementById('energyAmount').innerHTML = Math.floor(currentEnergy);
-        let percent = (currentEnergy/maxEnergy)*100;
-        document.getElementById('energyFill').style.width = Math.min(100,percent)+'%';
-        
-        document.getElementById('tapPrice').innerHTML = getTapPrice() + ' 💎';
-        document.getElementById('energyPrice').innerHTML = getEnergyPrice() + ' 💎';
-        if(!hasAutoClicker) document.getElementById('autoPrice').innerHTML = AUTO_CLICKER_PRICE + ' 💎';
-        else document.getElementById('autoPrice').innerHTML = 'КУПЛЕН ✅';
-        if(!hasCrit) document.getElementById('critPrice').innerHTML = CRIT_PRICE + ' 💎';
-        else document.getElementById('critPrice').innerHTML = 'КУПЛЕН ✅';
-
-        let activeHtml = '';
-        let now = Date.now();
-        for(let b of activeBoosts) {
-            if(b.expireTime > now) {
-                let remainSec = Math.floor((b.expireTime - now)/1000);
-                let min = Math.floor(remainSec/60);
-                let sec = remainSec%60;
-                let name = b.id === 'x2' ? 'x2 Алмазы' : (b.id === 'x3' ? 'x3 Алмазы' : b.id);
-                activeHtml += `<div class="active-boost-item">✨ ${name}: ${min}:${sec<10?'0'+sec:sec}</div>`;
+        // Создание летающих объектов
+        function createFloatingObjects() {
+            const container = document.getElementById('floatingObjects');
+            container.innerHTML = '';
+            
+            const objects = ['🍃', '🦋', '✨', '⭐', '🌸', '🍂', '❄️', '🌈', '💫', '🕊️'];
+            
+            for (let i = 0; i < 30; i++) {
+                const obj = document.createElement('div');
+                obj.className = 'floating-object';
+                obj.innerHTML = objects[Math.floor(Math.random() * objects.length)];
+                obj.style.left = Math.random() * 100 + '%';
+                obj.style.top = Math.random() * 100 + '%';
+                obj.style.fontSize = (Math.random() * 30 + 15) + 'px';
+                obj.style.animationDelay = Math.random() * 10 + 's';
+                obj.style.animationDuration = (Math.random() * 10 + 8) + 's';
+                obj.style.opacity = Math.random() * 0.5 + 0.3;
+                container.appendChild(obj);
+                floatingObjects.push(obj);
             }
         }
-        if(noEnergyModeUntil > now) {
-            let remainSec = Math.floor((noEnergyModeUntil - now)/1000);
-            let min = Math.floor(remainSec/60);
-            let sec = remainSec%60;
-            activeHtml += `<div class="active-boost-item">⚡ Без энергии: ${min}:${sec<10?'0'+sec:sec}</div>`;
-        }
-        document.getElementById('activeBoostsList').innerHTML = activeHtml || "Нет активных бустов";
-        
-        let { daysInMonth, firstDay } = initCalendar();
-        let today = new Date().getDate();
-        let calHtml = '';
-        for(let i=0; i<firstDay; i++) calHtml += `<div></div>`;
-        for(let d=1; d<=daysInMonth; d++) {
-            let claimed = calendarClaimed[d] ? 'claimed' : '';
-            let isToday = (d === today) ? 'today' : '';
-            let available = (!calendarClaimed[d] && d <= today) ? 'available' : '';
-            calHtml += `<div class="calendar-day ${claimed} ${isToday} ${available}" onclick="claimCalendarDay(${d})">${d}<br>${calendarClaimed[d] ? '✅' : (d<=today ? '🎁' : '🔒')}</div>`;
-        }
-        document.getElementById('calendarGrid').innerHTML = calHtml;
-        
-        let timeLeft = 86400000 - (Date.now() - lastDailyRewardTime);
-        if(timeLeft > 0) {
-            let hours = Math.floor(timeLeft / 3600000);
-            let minutes = Math.floor((timeLeft % 3600000) / 60000);
-            document.getElementById('dailyTimerText').innerHTML = `🎁 Следующая награда через: ${hours}ч ${minutes}мин`;
-        } else {
-            document.getElementById('dailyTimerText').innerHTML = `🎁 Награда доступна! Заберите!`;
+
+        // Обновление фона
+        function updateBackground() {
+            const bg = document.getElementById('background');
+            const location = locations[currentLocationIndex];
+            bg.style.background = location.bgGradient;
+            
+            // Анимируем летающие объекты под новую локацию
+            updateFloatingObjectsForLocation();
         }
 
-        let missionsHtml = '';
-        for(let k in missions) {
-            let m = missions[k];
-            let status = m.claimed ? '✅' : `${m.current}/${m.target}`;
-            missionsHtml += `<div class="mission-item">📌 ${m.desc} ${status} ${!m.claimed && m.current>=m.target ? `<button class="claim-mission" data-m="${k}">Забрать</button>` : ''}</div>`;
+        // Обновление летающих объектов в зависимости от локации
+        function updateFloatingObjectsForLocation() {
+            const container = document.getElementById('floatingObjects');
+            const location = locations[currentLocationIndex];
+            
+            let newObjects = [];
+            switch(currentLocationIndex) {
+                case 0: // Лес
+                    newObjects = ['🍃', '🦋', '🌸', '🐿️', '🍄'];
+                    break;
+                case 1: // Горы
+                    newObjects = ['❄️', '⛰️', '🏔️', '💨', '✨'];
+                    break;
+                case 2: // Пляж
+                    newObjects = ['🌊', '🐠', '🐚', '☀️', '🏄'];
+                    break;
+                case 3: // Город
+                    newObjects = ['🚗', '🏢', '🚕', '🚇', '💼'];
+                    break;
+                case 4: // Пустыня
+                    newObjects = ['🐫', '☀️', '🏜️', '🌵', '💨'];
+                    break;
+                case 5: // Вулкан
+                    newObjects = ['🌋', '🔥', '💨', '⚡', '🌑'];
+                    break;
+                default:
+                    newObjects = ['✨', '⭐', '🌟', '💫', '⚡'];
+            }
+            
+            // Обновляем объекты
+            const objects = document.querySelectorAll('.floating-object');
+            objects.forEach((obj, index) => {
+                obj.innerHTML = newObjects[index % newObjects.length];
+            });
         }
-        document.getElementById('missionsList').innerHTML = missionsHtml;
-        document.querySelectorAll('.claim-mission').forEach(btn => btn.onclick = () => claimMission(btn.dataset.m));
 
-        let topHtml = topDonors.slice(0,5).map(d => `<div>👤 ${d.name} — ${d.amount} TON</div>`).join('');
-        document.getElementById('topDonorsList').innerHTML = topHtml || "Пока никого";
-        
-        updateModalInventory();
-    }
+        // Обновление интерфейса
+        function updateUI() {
+            const location = locations[currentLocationIndex];
+            
+            // Анимация смены карточки
+            const card = document.getElementById('locationCard');
+            card.style.animation = 'none';
+            setTimeout(() => {
+                card.style.animation = 'slideIn 0.5s ease';
+            }, 10);
+            
+            // Обновляем содержимое
+            document.getElementById('locationTitle').textContent = location.name;
+            document.getElementById('locationDescription').textContent = location.description;
+            
+            const statsHtml = `
+                <div>🌡️ Температура: ${location.stats.temp}</div>
+                <div>🌤️ Погода: ${location.stats.weather}</div>
+                <div>🐾 Активность: ${location.stats.activity}</div>
+            `;
+            document.getElementById('locationStats').innerHTML = statsHtml;
+            
+            // Меняем стиль карточки под локацию
+            const cardBg = document.querySelector('.location-card');
+            cardBg.style.background = 'rgba(255, 255, 255, 0.95)';
+            cardBg.style.backdropFilter = 'blur(10px)';
+            
+            updateBackground();
+        }
 
-    function updateModalInventory() {
-        let container = document.getElementById('modalInventoryList');
-        if(!container) return;
-        let html = '';
-        for(let item of inventory) {
-            if(item.amount > 0) {
-                html += `<div class="modal-inventory-item">
-                            <span>${item.icon} ${item.name} x${item.amount}</span>
-                            <button class="use-boost-modal" data-id="${item.id}">Использовать</button>
-                         </div>`;
+        // Смена локации
+        function changeLocation(direction) {
+            currentLocationIndex += direction;
+            if (currentLocationIndex < 0) currentLocationIndex = locations.length - 1;
+            if (currentLocationIndex >= locations.length) currentLocationIndex = 0;
+            updateUI();
+            showNotification(`Переход в локацию: ${locations[currentLocationIndex].name}`, 'success');
+        }
+
+        // Показать уведомление
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <span>${type === 'success' ? '✅' : '❌'}</span>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Открыть модальное окно донатов
+        function openDonationModal() {
+            const modal = document.getElementById('donationModal');
+            modal.style.display = 'flex';
+            
+            // Добавляем обработчики для кнопок выбора суммы
+            const amountButtons = document.querySelectorAll('.donation-amount');
+            amountButtons.forEach(btn => {
+                btn.onclick = () => {
+                    amountButtons.forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    selectedAmount = parseInt(btn.getAttribute('data-amount'));
+                    document.getElementById('customAmount').value = '';
+                };
+            });
+        }
+
+        // Закрыть модальное окно
+        function closeDonationModal() {
+            const modal = document.getElementById('donationModal');
+            modal.style.display = 'none';
+            selectedAmount = null;
+            document.querySelectorAll('.donation-amount').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById('customAmount').value = '';
+        }
+
+        // Подтверждение доната
+        function confirmDonation() {
+            let amount = selectedAmount;
+            const customAmount = parseInt(document.getElementById('customAmount').value);
+            
+            if (customAmount && customAmount > 0) {
+                amount = customAmount;
+            }
+            
+            if (!amount || amount <= 0) {
+                showNotification('Пожалуйста, выберите или введите сумму доната', 'error');
+                return;
+            }
+            
+            // Показываем подтверждение
+            const confirmed = confirm(`Вы уверены, что хотите пожертвовать ${amount} ₽?`);
+            
+            if (confirmed) {
+                // Добавляем сумму к общему счету
+                totalDonations += amount;
+                document.getElementById('totalDonations').textContent = totalDonations;
+                
+                // Показываем анимацию благодарности
+                showNotification(`💝 Спасибо за донат в размере ${amount} ₽! Ваша поддержка очень важна для нас!`, 'success');
+                
+                // Дополнительная анимация
+                createDonationEffect();
+                
+                // Закрываем модальное окно
+                closeDonationModal();
+                
+                // Сохраняем в localStorage
+                localStorage.setItem('totalDonations', totalDonations);
             }
         }
-        if(html === '') html = '<div style="text-align:center">Инвентарь пуст</div>';
-        container.innerHTML = html;
-        document.querySelectorAll('.use-boost-modal').forEach(btn => {
-            btn.onclick = () => {
-                useBoost(btn.dataset.id);
-                updateModalInventory();
-            };
+
+        // Эффект при донате
+        function createDonationEffect() {
+            const hearts = ['❤️', '💝', '💖', '💗', '💓', '💕'];
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.position = 'fixed';
+                heart.style.left = Math.random() * window.innerWidth + 'px';
+                heart.style.bottom = '0px';
+                heart.style.fontSize = (Math.random() * 30 + 20) + 'px';
+                heart.style.pointerEvents = 'none';
+                heart.style.zIndex = '9999';
+                heart.style.animation = 'float 1s ease-out forwards';
+                document.body.appendChild(heart);
+                
+                setTimeout(() => heart.remove(), 1000);
+            }
+        }
+
+        // Загрузка сохраненных донатов
+        function loadSavedDonations() {
+            const saved = localStorage.getItem('totalDonations');
+            if (saved) {
+                totalDonations = parseInt(saved);
+                document.getElementById('totalDonations').textContent = totalDonations;
+            }
+        }
+
+        // Добавляем CSS для анимации сердечек
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                0% {
+                    transform: translateY(0) rotate(0deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(-100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Инициализация
+        createFloatingObjects();
+        loadSavedDonations();
+        updateUI();
+        
+        // Закрытие модального окна по клику вне его
+        window.onclick = function(event) {
+            const modal = document.getElementById('donationModal');
+            if (event.target === modal) {
+                closeDonationModal();
+            }
+        }
+        
+        // Добавляем эффект параллакса для фона
+        document.addEventListener('mousemove', (e) => {
+            const objects = document.querySelectorAll('.floating-object');
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            objects.forEach((obj, index) => {
+                const speed = 20 + index * 2;
+                const x = (mouseX - 0.5) * speed;
+                const y = (mouseY - 0.5) * speed;
+                obj.style.transform = `translate(${x}px, ${y}px)`;
+            });
         });
-    }
-
-    document.getElementById('upgradeTap').onclick = () => {
-        let price = getTapPrice();
-        if(coins >= price) {
-            coins -= price;
-            tapPower++;
-            tapLevel++;
-            totalUpgrades++;
-            missions.upgrade10.current = Math.min(missions.upgrade10.target, totalUpgrades);
-            saveAll();
-            updateUI();
-            showToast(`💪 Сила тапа +1! Следующая цена: ${Math.floor(80 * Math.pow(1.5, tapLevel))} 💎`, false);
-        } else showToast("Не хватает алмазов!", true);
-    };
-
-    document.getElementById('upgradeEnergy').onclick = () => {
-        let price = getEnergyPrice();
-        if(coins >= price) {
-            coins -= price;
-            maxEnergy += 10;
-            currentEnergy += 10;
-            energyLevel++;
-            totalUpgrades++;
-            missions.upgrade10.current = Math.min(missions.upgrade10.target, totalUpgrades);
-            saveAll();
-            updateUI();
-            showToast(`🔋 Энергия +10 (макс+10)! Следующая цена: ${Math.floor(200 * Math.pow(1.4, energyLevel))} 💎`, false);
-        } else showToast("Не хватает алмазов!", true);
-    };
-
-    document.getElementById('buyAuto').onclick = () => {
-        if(!hasAutoClicker && coins >= AUTO_CLICKER_PRICE) {
-            coins -= AUTO_CLICKER_PRICE;
-            hasAutoClicker = true;
-            totalUpgrades++;
-            missions.upgrade10.current = Math.min(missions.upgrade10.target, totalUpgrades);
-            saveAll();
-            updateUI();
-            showToast("🤖 Автокликер активирован! Теперь он работает постоянно и его сила равна силе тапа!", false);
-        } else if(hasAutoClicker) showToast("Автокликер уже куплен!", true);
-        else showToast("Не хватает алмазов!", true);
-    };
-
-    document.getElementById('buyCrit').onclick = () => {
-        if(!hasCrit && coins >= CRIT_PRICE) {
-            coins -= CRIT_PRICE;
-            hasCrit = true;
-            totalUpgrades++;
-            missions.upgrade10.current = Math.min(missions.upgrade10.target, totalUpgrades);
-            saveAll();
-            updateUI();
-            showToast("✨ Критический удар активирован (x3)!", false);
-        } else if(hasCrit) showToast("Крит уже куплен!", true);
-        else showToast("Не хватает алмазов!", true);
-    };
-
-    document.getElementById('tapButton').onclick = (e) => {
-        let toAdd = getCurrentTapPower();
-        if(hasCrit && Math.random()<0.2) toAdd *= 3;
-        if(spendEnergy(1)) {
-            addCoins(toAdd);
-            clickCounter++;
-            if(clickCounter % 50 === 0) praise();
-            missions.tap500.current = Math.min(missions.tap500.target, missions.tap500.current+1);
-            saveAll();
-            let rect = e.target.closest('.tap-area').getBoundingClientRect();
-            let div = document.createElement('div');
-            div.className = 'floating-number';
-            div.innerText = `+${Math.floor(toAdd)}`;
-            div.style.left = (rect.left+rect.width/2)+'px';
-            div.style.top = (rect.top+rect.height/2)+'px';
-            document.body.appendChild(div);
-            setTimeout(()=>div.remove(),600);
-            updateUI();
-        } else {
-            document.getElementById('secretaryQuote').innerHTML = "⏳ Нет энергии. Подожди 8 секунд.";
-            showToast("Не хватает энергии!", true);
-        }
-    };
-
-    document.getElementById('claimDailyBtn').onclick = claimDailyKey;
-
-    document.querySelectorAll('.donate-btn').forEach(btn => {
-        btn.onclick = () => {
-            let ton = parseFloat(btn.dataset.ton);
-            showToast(`💎 Имитация оплаты ${ton} TON. Буст добавлен!`, false);
-            if(ton === 0.5) addBoostToInventory('x2', 'Колба x2', 600, '🧪');
-            else if(ton === 1) addBoostToInventory('x3', 'Колба x3', 1800, '🧪');
-            else if(ton === 2) addBoostToInventory('noenergy', 'Колба без энергии', 120, '⚡');
-            else if(ton === 5) { localStorage.setItem('vip','true'); showToast("👑 VIP статус активирован навсегда! x2 ко всем доходам", false); addCoins(500); }
-            missions.donate1.current = Math.min(missions.donate1.target, missions.donate1.current+1);
-            topDonors.unshift({ name: "Игрок", amount: ton });
-            topDonors = topDonors.slice(0,8);
-            saveAll();
-            updateUI();
-        };
-    });
-
-    function claimMission(k) { let m = missions[k]; if(!m.claimed && m.current >= m.target) { addCoins(m.reward); m.claimed = true; saveAll(); updateUI(); showToast(`🏆 Миссия выполнена! +${m.reward} алмазов`, false); } }
-
-    document.getElementById('supportButton').onclick = () => { window.open("https://t.me/ваш_канал", "_blank"); showToast("❤️ Спасибо за поддержку!", false); };
-
-    let modal = document.getElementById('inventoryModal');
-    document.getElementById('openInventoryBtn').onclick = () => {
-        updateModalInventory();
-        modal.style.display = 'flex';
-    };
-    document.getElementById('closeInventoryModal').onclick = () => { modal.style.display = 'none'; };
-    window.onclick = (e) => { if(e.target === modal) modal.style.display = 'none'; };
-
-    function calculateOfflineProgress() {
-        let now = Date.now();
-        let lastExit = parseInt(localStorage.getItem('lastExitTime') || now);
-        let secondsPassed = Math.floor((now - lastExit) / 1000);
-        
-        if(secondsPassed < 600) {
-            localStorage.setItem('lastExitTime', now);
-            return;
-        }
-        
-        let minutesPassed = Math.floor(secondsPassed / 60);
-        let earnedCoins = 0;
-        
-        if(hasAutoClicker) {
-            let autoTicks = Math.floor(secondsPassed / 5);
-            earnedCoins = getCurrentTapPower() * autoTicks;
-        }
-        
-        let energyGain = Math.min(maxEnergy - currentEnergy, Math.floor(secondsPassed / 8));
-        if(energyGain > 0) currentEnergy += energyGain;
-        
-        if(earnedCoins > 0) {
-            pendingOfflineReward = earnedCoins;
-            let modalOff = document.getElementById('offlineModal');
-            let message = document.getElementById('offlineMessage');
-            let rewardSpan = document.getElementById('offlineReward');
-            
-            message.innerHTML = `💎 Вас не было <strong>${minutesPassed}</strong> минут!<br>🤖 Автокликер собрал:`;
-            rewardSpan.innerHTML = `✨ +${earnedCoins.toLocaleString()} АЛМАЗОВ ✨`;
-            
-            localStorage.setItem('lastExitTime', now);
-            
-            modalOff.style.display = 'flex';
-            
-            document.getElementById('offlineCloseBtn').onclick = () => {
-                addCoins(pendingOfflineReward);
-                showToast(`🎁 +${pendingOfflineReward} алмазов за время отсутствия!`, false);
-                pendingOfflineReward = 0;
-                modalOff.style.display = 'none';
-                saveAll();
-                updateUI();
-            };
-            
-            document.getElementById('offlineDoubleBtn').onclick = () => {
-                showToast(`💎 Оплата 2 TON. Награда УДВОЕНА! +${pendingOfflineReward * 2} алмазов`, false);
-                addCoins(pendingOfflineReward * 2);
-                topDonors.unshift({ name: "Офлайн", amount: 2 });
-                topDonors = topDonors.slice(0,8);
-                pendingOfflineReward = 0;
-                modalOff.style.display = 'none';
-                saveAll();
-                updateUI();
-            };
-        } else {
-            localStorage.setItem('lastExitTime', now);
-        }
-        saveAll();
-        updateUI();
-    }
-
-    calculateOfflineProgress();
-    updateUI();
-    window.addEventListener('beforeunload', () => { localStorage.setItem('lastExitTime', Date.now()); });
-</script>
+    </script>
 </body>
 </html>
