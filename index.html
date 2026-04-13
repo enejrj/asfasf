@@ -925,10 +925,19 @@
             btn.disabled = true; btn.innerText = "⏳";
             let inv = await createInvoice(ton, boost);
             if(inv.success) {
-                activeInvoices[inv.invoiceId] = { amount: ton, boost: boost };
-                localStorage.setItem('activeInvoices', JSON.stringify(activeInvoices));
-                window.open(inv.payUrl, '_blank');
-                showToast(`💰 Счёт на ${ton} TON создан!`, false);
+activeInvoices[inv.invoiceId] = { amount: ton, boost: boost };
+localStorage.setItem('activeInvoices', JSON.stringify(activeInvoices));
+
+// Улучшенное открытие платежной страницы
+const payWindow = window.open(inv.payUrl, '_blank');
+if (!payWindow || payWindow.closed || typeof payWindow.closed === 'undefined') {
+    // Если браузер заблокировал всплывающее окно
+    showToast(`⚠️ Браузер заблокировал окно. Ссылка скопирована!`, true);
+    navigator.clipboard.writeText(inv.payUrl);
+    showToast(`📋 Ссылка на оплату в буфере обмена. Вставьте её в адресную строку браузера.`, false);
+} else {
+    showToast(`💰 Счёт на ${ton} TON создан! Оплатите в открывшемся окне.`, false);
+}
                 let interval = setInterval(async () => {
                     if(await checkInvoice(inv.invoiceId)) {
                         clearInterval(interval);
