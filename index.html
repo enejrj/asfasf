@@ -918,6 +918,19 @@
     
     setInterval(() => { if(hasAutoClicker && spendEnergy(1)) { addCoins(getCurrentTapPower()); updateUI(); } }, 5000);
     setInterval(() => { if(currentEnergy < maxEnergy) { currentEnergy = Math.min(maxEnergy, currentEnergy + 2); saveAll(); updateUI(); } }, 10000);
+    // Обработка бонусов после возврата со страницы донатов
+function checkDonationBonuses() {
+    const bonuses = JSON.parse(localStorage.getItem('donationBonuses') || '[]');
+    if (bonuses.length > 0) {
+        showToast(`🎁 Получено ${bonuses.length} бонусов!`, false);
+        bonuses.forEach(bonus => giveDonationBonus(bonus.ton, bonus.boostType));
+        localStorage.removeItem('donationBonuses');
+        updateUI();
+    }
+}
+
+// Вызов при загрузке
+checkDonationBonuses();
     setInterval(() => updateUI(), 1000);
     
     initMissions();
