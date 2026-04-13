@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>💎 NO LIFE, JUST TAP | Сапёр + Секретарша</title>
+    <title>💎 NO LIFE, JUST TAP | ЛЕГКИЙ СТАРТ</title>
     <style>
         * {
             margin: 0;
@@ -220,7 +220,6 @@
         .calendar-day.today { border: 2px solid #ffd966; box-shadow: 0 0 8px gold; }
         .mission-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,215,0,0.2); flex-wrap: wrap; gap: 8px; }
         
-        /* САПЁР */
         .saper-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -298,20 +297,32 @@
             border: 2px solid #ffd966;
             text-align: center;
         }
+        .quick-upgrade {
+            background: #2a5a3a;
+            margin-top: 12px;
+            padding: 8px;
+            border-radius: 28px;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+        .quick-btn {
+            background: #f0b429;
+            color: #1a1a2e !important;
+            padding: 4px 12px;
+        }
     </style>
 </head>
 <body>
 <div class="game-container">
-    <!-- НАВИГАЦИЯ -->
     <div class="nav">
-        <button class="nav-btn" data-page="main">💎 ГЛАВНАЯ</button>
+        <button class="nav-btn active" data-page="main">💎 ГЛАВНАЯ</button>
         <button class="nav-btn" data-page="upgrades">📈 УЛУЧШЕНИЯ</button>
         <button class="nav-btn" data-page="donate">💰 ДОНАТЫ</button>
         <button class="nav-btn" data-page="profile">👤 ПРОФИЛЬ</button>
         <button class="nav-btn" data-page="daily">📅 ЕЖЕДНЕВНОЕ</button>
     </div>
 
-    <!-- СТРАНИЦА: ГЛАВНАЯ -->
     <div id="page-main" class="page active-page">
         <div class="goal-panel">
             <div class="goal-amount">30,000,000,000 💎</div>
@@ -336,13 +347,16 @@
             <div class="per-tap">+<span id="tapPower">1</span> за тап</div>
             <div class="energy-bar-container"><div class="energy-fill" id="energyFill"></div></div>
         </div>
+        <div class="quick-upgrade">
+            <button class="quick-btn" id="quickTapUpgrade">💪 +1 СИЛА</button>
+            <button class="quick-btn" id="quickEnergyUpgrade">🔋 +10 ЭНЕРГИИ</button>
+        </div>
         <div class="active-boosts-panel" style="background:rgba(0,0,0,0.5); border-radius:28px; padding:12px; margin-bottom:12px;">
             <strong>✨ АКТИВНЫЕ БУСТЫ</strong>
             <div id="activeBoostsList" class="active-boosts-grid">Нет активных бустов</div>
         </div>
     </div>
 
-    <!-- СТРАНИЦА: УЛУЧШЕНИЯ -->
     <div id="page-upgrades" class="page">
         <div class="upgrades-list">
             <div class="upgrade-card">
@@ -364,7 +378,6 @@
         </div>
     </div>
 
-    <!-- СТРАНИЦА: ДОНАТЫ -->
     <div id="page-donate" class="page">
         <div class="donate-section" style="background:rgba(0,0,0,0.5); border-radius:28px; padding:12px; margin-bottom:12px;">
             <strong>💎 ДОНАТЫ ЗА TON</strong>
@@ -380,7 +393,6 @@
         </div>
     </div>
 
-    <!-- СТРАНИЦА: ПРОФИЛЬ -->
     <div id="page-profile" class="page">
         <div class="referral-panel" style="background:rgba(0,0,0,0.5); border-radius:28px; padding:12px; margin-bottom:12px;">
             <strong>👥 РЕФЕРАЛЬНАЯ СИСТЕМА</strong>
@@ -398,7 +410,6 @@
         </div>
     </div>
 
-    <!-- СТРАНИЦА: ЕЖЕДНЕВНОЕ -->
     <div id="page-daily" class="page">
         <div class="calendar-panel" style="background:rgba(0,0,0,0.5); border-radius:28px; padding:12px; margin-bottom:12px;">
             <strong>📅 ЕЖЕМЕСЯЧНЫЕ НАГРАДЫ</strong>
@@ -408,22 +419,21 @@
         <div class="missions-panel" style="background:rgba(0,0,0,0.5); border-radius:28px; padding:12px; margin-bottom:12px;">
             <strong>🌟 ЕЖЕДНЕВНЫЕ МИССИИ</strong>
             <div id="missionsList"></div>
-            <div id="missionsResetTimer" class="reset-timer" style="font-size:0.7rem; text-align:center; margin-top:8px;">⏰ Новые миссии через: --:--:--</div>
+            <div id="missionsResetTimer" style="font-size:0.7rem; text-align:center; margin-top:8px;">⏰ Новые миссии через: --:--:--</div>
         </div>
         <div class="daily-card" style="background:rgba(0,0,0,0.5); border-radius:28px; padding:12px; margin-bottom:12px;">
             <span>🎁 ЕЖЕДНЕВНЫЙ БОНУС</span>
-            <button id="claimDailyBtn" style="margin-top:8px;">Забрать 100💎 + Колба x2</button>
+            <button id="claimDailyBtn" style="margin-top:8px;">Забрать 500💎 + Колба x2</button>
         </div>
         <div class="saper-panel" style="background:rgba(0,0,0,0.5); border-radius:28px; padding:12px; margin-bottom:12px;">
             <strong>💣 ЕЖЕДНЕВНЫЙ САПЁР 💎</strong>
             <div id="saperStatus" style="font-size:0.8rem; margin:8px 0;">🎲 Найди алмазы, не наступи на мину!</div>
             <div class="saper-grid" id="saperGrid"></div>
-            <div id="saperTimer" class="saper-timer" style="font-size:0.8rem; text-align:center;">⏳ Доступно сейчас!</div>
+            <div id="saperTimer" style="font-size:0.8rem; text-align:center;">⏳ Доступно сейчас!</div>
         </div>
     </div>
 </div>
 
-<!-- МОДАЛКА ИНВЕНТАРЯ -->
 <div id="inventoryModal" class="modal">
     <div class="modal-content">
         <h3>📦 ИНВЕНТАРЬ</h3>
@@ -433,7 +443,7 @@
 </div>
 
 <script>
-    // ========== API CRYPTO PAY ==========
+    // API (оставлен как есть)
     const CRYPTO_PAY_TOKEN = "566599:AAdZJg2Mui9HCJ0MywGDldEu7Zxygy9ifPm";
     async function createInvoice(amountTON, boostType) {
         try {
@@ -458,14 +468,14 @@
         } catch(e) { return false; }
     }
 
-    // ========== ОСНОВНЫЕ ПЕРЕМЕННЫЕ ==========
+    // ========== УЛУЧШЕННЫЕ СТАРТОВЫЕ ЗНАЧЕНИЯ ==========
     let userNickname = localStorage.getItem('userNickname');
     if(!userNickname) { userNickname = prompt("Введите ваш Telegram никнейм:", "@username") || "Игрок"; localStorage.setItem('userNickname', userNickname); }
     
-    let coins = parseInt(localStorage.getItem('coins') || '0');
-    let tapPower = parseInt(localStorage.getItem('tapPower') || '1');
-    let maxEnergy = parseInt(localStorage.getItem('maxEnergy') || '100');
-    let currentEnergy = parseInt(localStorage.getItem('currentEnergy') || '100');
+    let coins = parseInt(localStorage.getItem('coins') || '5000');  // Старт с 5000 монет
+    let tapPower = parseInt(localStorage.getItem('tapPower') || '5'); // Сила тапа 5
+    let maxEnergy = parseInt(localStorage.getItem('maxEnergy') || '200'); // Макс энергия 200
+    let currentEnergy = parseInt(localStorage.getItem('currentEnergy') || '200');
     let hasAutoClicker = localStorage.getItem('hasAutoClicker') === 'true';
     let hasCrit = localStorage.getItem('hasCrit') === 'true';
     let permanentBonusPower = parseInt(localStorage.getItem('permanentBonusPower') || '0');
@@ -479,30 +489,30 @@
     if(!myReferralCode) { myReferralCode = Math.random().toString(36).substring(2, 10) + Date.now().toString(36); localStorage.setItem('myReferralCode', myReferralCode); }
     
     let topDonors = JSON.parse(localStorage.getItem('topDonorsAggregated') || '[]');
-    let inventory = JSON.parse(localStorage.getItem('inventory') || '[{"id":"x2","name":"Колба x2","duration":600,"amount":0,"icon":"🧪"},{"id":"x3","name":"Колба x3","duration":1800,"amount":0,"icon":"🧪"},{"id":"noenergy","name":"Колба без энергии","duration":120,"amount":0,"icon":"⚡"}]');
+    let inventory = JSON.parse(localStorage.getItem('inventory') || '[{"id":"x2","name":"Колба x2","duration":600,"amount":2,"icon":"🧪"},{"id":"x3","name":"Колба x3","duration":1800,"amount":1,"icon":"🧪"},{"id":"noenergy","name":"Колба без энергии","duration":120,"amount":1,"icon":"⚡"}]');
     let activeBoosts = JSON.parse(localStorage.getItem('activeBoosts') || '[]');
     let activeInvoices = JSON.parse(localStorage.getItem('activeInvoices') || '{}');
     
     const LOCATIONS = [
         { name: "🏢 ОФИСНЫЙ ЭТАЖ", need: 0, bonus: 0 },
-        { name: "🌆 НОЧНОЙ МЕГАПОЛИС", need: 50000, bonus: 10000 },
-        { name: "🚀 КОСМИЧЕСКАЯ СТАНЦИЯ", need: 200000, bonus: 30000 },
-        { name: "🤖 КИБЕРПАНК 2077", need: 600000, bonus: 80000 },
-        { name: "👑 ЗОЛОТОЙ ТРОН", need: 1200000, bonus: 150000 },
-        { name: "✨ ВЛАСТЕЛИН ВСЕЛЕННОЙ", need: 2000000, bonus: 300000 },
-        { name: "🔥 ПЕКЛО КРИПТЫ", need: 5000000, bonus: 500000 },
-        { name: "💎 АЛМАЗНЫЕ КОПИ", need: 15000000, bonus: 1000000 },
-        { name: "🌍 МИРОВОЕ ГОСПОДСТВО", need: 50000000, bonus: 2500000 },
-        { name: "🚀 СВЕРХНОВАЯ", need: 200000000, bonus: 10000000 },
-        { name: "👾 ВНЕ ЗОНЫ ДОСТУПА", need: 1000000000, bonus: 50000000 },
-        { name: "🏆 АБСОЛЮТ", need: 30000000000, bonus: 1000000000 }
+        { name: "🌆 НОЧНОЙ МЕГАПОЛИС", need: 25000, bonus: 25000 }, // уменьшены пороги
+        { name: "🚀 КОСМИЧЕСКАЯ СТАНЦИЯ", need: 100000, bonus: 75000 },
+        { name: "🤖 КИБЕРПАНК 2077", need: 300000, bonus: 150000 },
+        { name: "👑 ЗОЛОТОЙ ТРОН", need: 800000, bonus: 300000 },
+        { name: "✨ ВЛАСТЕЛИН ВСЕЛЕННОЙ", need: 2000000, bonus: 600000 },
+        { name: "🔥 ПЕКЛО КРИПТЫ", need: 8000000, bonus: 1200000 },
+        { name: "💎 АЛМАЗНЫЕ КОПИ", need: 25000000, bonus: 2500000 },
+        { name: "🌍 МИРОВОЕ ГОСПОДСТВО", need: 100000000, bonus: 5000000 },
+        { name: "🚀 СВЕРХНОВАЯ", need: 500000000, bonus: 20000000 },
+        { name: "👾 ВНЕ ЗОНЫ ДОСТУПА", need: 3000000000, bonus: 100000000 },
+        { name: "🏆 АБСОЛЮТ", need: 30000000000, bonus: 500000000 }
     ];
     const GOAL_AMOUNT = 30000000000;
     
-    function getTapPrice() { return Math.floor(60 * Math.pow(1.5, tapLevel)); }
-    function getEnergyPrice() { return Math.floor(140 * Math.pow(1.4, energyLevel)); }
-    const AUTO_CLICKER_PRICE = 500;
-    const CRIT_PRICE = 1000;
+    function getTapPrice() { return Math.floor(50 * Math.pow(1.3, tapLevel)); } // удешевлено
+    function getEnergyPrice() { return Math.floor(100 * Math.pow(1.25, energyLevel)); }
+    const AUTO_CLICKER_PRICE = 300; // дешевле
+    const CRIT_PRICE = 600;
     
     function getMultiplier() {
         let mult = 1;
@@ -588,7 +598,6 @@
         showToast(`✅ Донат ${amountTON} TON подтверждён!`, false);
     }
     
-    // ========== РЕФЕРАЛЫ ==========
     function getReferralLink() { return `${window.location.origin}${window.location.pathname}?ref=${myReferralCode}`; }
     function addReferralBonus() { referralCount++; referralBonus += 500; addCoins(500); addBoostToInventory('x2', 'Колба x2', 1800, '🧪'); showToast(`👥 Новый реферал! +500💎 и Колба x2!`, false); localStorage.setItem('referralCount', referralCount); localStorage.setItem('referralBonus', referralBonus); updateUI(); }
     function checkReferral() {
@@ -604,7 +613,6 @@
         }
     }
     
-    // ========== ЛОКАЦИИ ==========
     function checkLocationUnlock() {
         let currentIndex = 0;
         for(let i=0;i<LOCATIONS.length;i++) if(coins >= LOCATIONS[i].need) currentIndex = i;
@@ -620,7 +628,6 @@
         }
     }
     
-    // ========== МИССИИ ==========
     let dailyMissions = [];
     let lastMissionReset = localStorage.getItem('lastMissionReset') || '';
     
@@ -628,10 +635,10 @@
         let today = new Date().toDateString();
         if(lastMissionReset !== today) {
             dailyMissions = [
-                { desc: "Сделать 50 тапов", target: 50, current: 0, reward: 200, completed: false, claimed: false, type: "tap" },
-                { desc: "Потратить 50 энергии", target: 50, current: 0, reward: 300, completed: false, claimed: false, type: "energy" },
-                { desc: "Купить 1 улучшение", target: 1, current: 0, reward: 500, completed: false, claimed: false, type: "upgrade" },
-                { desc: "Заработать 1000 алмазов", target: 1000, current: 0, reward: 400, completed: false, claimed: false, type: "coins" }
+                { desc: "Сделать 30 тапов", target: 30, current: 0, reward: 500, completed: false, claimed: false, type: "tap" },
+                { desc: "Потратить 50 энергии", target: 50, current: 0, reward: 600, completed: false, claimed: false, type: "energy" },
+                { desc: "Купить 1 улучшение", target: 1, current: 0, reward: 800, completed: false, claimed: false, type: "upgrade" },
+                { desc: "Заработать 2000 алмазов", target: 2000, current: 0, reward: 1000, completed: false, claimed: false, type: "coins" }
             ];
             lastMissionReset = today;
             localStorage.setItem('dailyMissions', JSON.stringify(dailyMissions));
@@ -668,7 +675,6 @@
         }
     }
     
-    // ========== КАЛЕНДАРЬ ==========
     let calendarClaimed = JSON.parse(localStorage.getItem('calendarClaimed') || '{}');
     let calendarMonth = localStorage.getItem('calendarMonth') || '';
     
@@ -685,7 +691,7 @@
         let today = new Date().getDate();
         if(day > today) return showToast("Этот день ещё не наступил!", true);
         if(calendarClaimed[day]) return showToast("Уже получено!", true);
-        let reward = 100 + day * 5;
+        let reward = 200 + day * 10; // увеличены награды
         addCoins(reward);
         showToast(`🎉 +${reward} алмазов за ${day} день месяца!`, false);
         calendarClaimed[day] = true;
@@ -693,7 +699,6 @@
         updateUI();
     }
     
-    // ========== САПЁР С РАСКРЫТИЕМ ВСЕХ КАРТ ПРИ ПРОИГРЫШЕ ==========
     let saperAvailable = true;
     let saperLastPlay = parseInt(localStorage.getItem('saperLastPlay') || '0');
     let saperField = [];
@@ -718,7 +723,7 @@
         saperField = [];
         for(let i=0; i<25; i++) saperField.push({ type: 'gem', opened: false });
         let mines = 0;
-        while(mines < 5) {
+        while(mines < 4) { // меньше мин
             let idx = Math.floor(Math.random() * 25);
             if(saperField[idx].type !== 'mine') {
                 saperField[idx].type = 'mine';
@@ -772,7 +777,7 @@
             localStorage.setItem('saperLastPlay', saperLastPlay);
             initSaper();
         } else {
-            let reward = 100;
+            let reward = 300; // больше алмазов
             addCoins(reward);
             showToast(`💎 Ты нашёл алмаз! +${reward}💎`, false);
             let allGemsOpened = true;
@@ -783,7 +788,8 @@
                 }
             }
             if(allGemsOpened) {
-                showToast("🎉 Ты собрал все алмазы! Молодец!", false);
+                showToast("🎉 Ты собрал все алмазы! +1000 бонус!", false);
+                addCoins(1000);
                 saperAvailable = false;
                 saperLastPlay = Date.now();
                 localStorage.setItem('saperLastPlay', saperLastPlay);
@@ -794,7 +800,6 @@
         if(!saperAvailable) initSaper();
     }
     
-    // ========== СОХРАНЕНИЕ ==========
     function saveAll() {
         localStorage.setItem('coins', coins);
         localStorage.setItem('tapPower', tapPower);
@@ -815,7 +820,6 @@
         localStorage.setItem('activeInvoices', JSON.stringify(activeInvoices));
     }
     
-    // ========== НАВИГАЦИЯ ==========
     document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             let page = btn.dataset.page;
@@ -826,7 +830,6 @@
         });
     });
     
-    // ========== ОБНОВЛЕНИЕ UI ==========
     function updateUI() {
         let cur = 0;
         for(let i=LOCATIONS.length-1; i>=0; i--) if(coins >= LOCATIONS[i].need) { cur = i; break; }
@@ -844,7 +847,7 @@
         document.getElementById('autoPrice').innerHTML = hasAutoClicker ? 'КУПЛЕН ✅' : AUTO_CLICKER_PRICE + ' 💎';
         document.getElementById('critPrice').innerHTML = hasCrit ? 'КУПЛЕН ✅' : CRIT_PRICE + ' 💎';
         let goalPercent = Math.min(100, (coins / GOAL_AMOUNT) * 100);
-        document.getElementById('goalProgress').innerHTML = `${goalPercent.toFixed(2)}%`;
+        document.getElementById('goalProgress').innerHTML = `${goalPercent.toFixed(4)}%`;
         if(goalPercent >= 100) document.getElementById('goalProgress').innerHTML = `🏆 ДОСТИГНУТО! 🏆`;
         
         let activeHtml = '', now = Date.now();
@@ -899,18 +902,21 @@
         } else { document.getElementById('dailyTimerText').innerHTML = `🎁 Доступно!`; }
     }
     
-    // ========== ОБРАБОТЧИКИ ==========
+    // Обработчики
     document.getElementById('upgradeTap').onclick = () => { let p = getTapPrice(); if(coins >= p) { coins -= p; tapPower++; tapLevel++; updateMissionProgress('upgrade', 1); saveAll(); updateUI(); showToast(`💪 Сила +1!`, false); } else showToast("Не хватает!", true); };
     document.getElementById('upgradeEnergy').onclick = () => { let p = getEnergyPrice(); if(coins >= p) { coins -= p; maxEnergy += 10; currentEnergy += 10; energyLevel++; updateMissionProgress('upgrade', 1); saveAll(); updateUI(); showToast(`🔋 Энергия +10!`, false); } else showToast("Не хватает!", true); };
     document.getElementById('buyAuto').onclick = () => { if(!hasAutoClicker && coins >= AUTO_CLICKER_PRICE) { coins -= AUTO_CLICKER_PRICE; hasAutoClicker = true; updateMissionProgress('upgrade', 1); saveAll(); updateUI(); showToast("🤖 Автокликер активирован!", false); } else showToast("Не хватает или уже куплен!", true); };
     document.getElementById('buyCrit').onclick = () => { if(!hasCrit && coins >= CRIT_PRICE) { coins -= CRIT_PRICE; hasCrit = true; updateMissionProgress('upgrade', 1); saveAll(); updateUI(); showToast("✨ Крит x3 активирован!", false); } else showToast("Не хватает или уже куплен!", true); };
+    
+    document.getElementById('quickTapUpgrade').onclick = () => { let p = getTapPrice(); if(coins >= p) { coins -= p; tapPower++; tapLevel++; updateMissionProgress('upgrade', 1); saveAll(); updateUI(); showToast(`💪 Сила +1!`, false); } else showToast("Не хватает!", true); };
+    document.getElementById('quickEnergyUpgrade').onclick = () => { let p = getEnergyPrice(); if(coins >= p) { coins -= p; maxEnergy += 10; currentEnergy += 10; energyLevel++; updateMissionProgress('upgrade', 1); saveAll(); updateUI(); showToast(`🔋 Энергия +10!`, false); } else showToast("Не хватает!", true); };
     
     document.getElementById('tapButton').onclick = (e) => { let add = getCurrentTapPower(); if(hasCrit && Math.random()<0.2) add *= 3; if(spendEnergy(1)) { addCoins(add); updateMissionProgress('tap', 1); let rect = e.target.closest('.tap-area').getBoundingClientRect(); let div = document.createElement('div'); div.className = 'floating-number'; div.innerText = `+${Math.floor(add)}`; div.style.left = (rect.left+rect.width/2)+'px'; div.style.top = (rect.top+rect.height/2)+'px'; document.body.appendChild(div); setTimeout(()=>div.remove(),600); updateUI(); } else showToast("Нет энергии!", true); };
     
     document.getElementById('copyReferralBtn').onclick = () => { navigator.clipboard.writeText(getReferralLink()); showToast("📋 Реферальная ссылка скопирована!", false); };
     document.getElementById('openInventoryBtn').onclick = () => { updateUI(); document.getElementById('inventoryModal').style.display = 'flex'; };
     document.getElementById('closeInventoryModal').onclick = () => { document.getElementById('inventoryModal').style.display = 'none'; };
-    document.getElementById('claimDailyBtn').onclick = () => { let last = parseInt(localStorage.getItem('lastDailyRewardTime') || '0'); let now = Date.now(); if(now - last < 86400000) { let hours = Math.ceil((86400000 - (now - last)) / 3600000); showToast(`⏳ Через ${hours} часов!`, true); return; } localStorage.setItem('lastDailyRewardTime', now); addCoins(100); addBoostToInventory('x2', 'Колба x2', 600, '🧪'); showToast("🎁 100💎 + Колба x2!", false); updateUI(); };
+    document.getElementById('claimDailyBtn').onclick = () => { let last = parseInt(localStorage.getItem('lastDailyRewardTime') || '0'); let now = Date.now(); if(now - last < 86400000) { let hours = Math.ceil((86400000 - (now - last)) / 3600000); showToast(`⏳ Через ${hours} часов!`, true); return; } localStorage.setItem('lastDailyRewardTime', now); addCoins(500); addBoostToInventory('x2', 'Колба x2', 600, '🧪'); showToast("🎁 500💎 + Колба x2!", false); updateUI(); };
     
     document.querySelectorAll('.donate-btn').forEach(btn => {
         btn.onclick = async () => {
@@ -938,8 +944,8 @@
         };
     });
     
-    setInterval(() => { if(hasAutoClicker && spendEnergy(1)) { addCoins(getCurrentTapPower()); updateUI(); } }, 8000);
-    setInterval(() => { if(currentEnergy < maxEnergy) { currentEnergy = Math.min(maxEnergy, currentEnergy + 1); saveAll(); updateUI(); } }, 15000);
+    setInterval(() => { if(hasAutoClicker && spendEnergy(1)) { addCoins(getCurrentTapPower()); updateUI(); } }, 5000); // автокликер быстрее
+    setInterval(() => { if(currentEnergy < maxEnergy) { currentEnergy = Math.min(maxEnergy, currentEnergy + 2); saveAll(); updateUI(); } }, 10000); // энергия восстанавливается быстрее
     setInterval(() => updateUI(), 1000);
     
     initMissions();
