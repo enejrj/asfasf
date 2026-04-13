@@ -5,147 +5,430 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>💎 NO LIFE, JUST TAP</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
-        body { min-height: 100vh; background: linear-gradient(135deg, #0a0f1e, #0c1222); display: flex; justify-content: center; align-items: center; font-family: 'Segoe UI', system-ui; padding: 16px; }
-        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.1), rgba(0,0,0,0)); background-size: 200px 200px; pointer-events: none; animation: starsFloat 20s linear infinite; }
-        @keyframes starsFloat { 0% { background-position: 0 0; } 100% { background-position: 200px 200px; } }
-        .game-container { max-width: 560px; width: 100%; background: rgba(10,20,35,0.7); backdrop-filter: blur(16px); border-radius: 48px; border: 1px solid rgba(255,215,0,0.4); padding: 20px; max-height: 95vh; overflow-y: auto; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0f1e, #0c1222);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
+            padding: 16px;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.1), rgba(0,0,0,0));
+            background-size: 200px 200px;
+            pointer-events: none;
+            animation: starsFloat 20s linear infinite;
+        }
+        @keyframes starsFloat {
+            0% { background-position: 0 0; }
+            100% { background-position: 200px 200px; }
+        }
+        .game-container {
+            max-width: 600px;
+            width: 100%;
+            background: rgba(10,20,35,0.7);
+            backdrop-filter: blur(16px);
+            border-radius: 48px;
+            border: 1px solid rgba(255,215,0,0.4);
+            padding: 20px;
+            max-height: 95vh;
+            overflow-y: auto;
+        }
         .game-container::-webkit-scrollbar { width: 4px; }
         body, body * { color: #fff !important; }
-        .goal-panel { background: linear-gradient(135deg, #ffd700, #ff6600); border-radius: 28px; padding: 16px; margin-bottom: 16px; text-align: center; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,215,0,0.7); } 70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(255,215,0,0); } 100% { transform: scale(1); } }
+
+        /* НАВИГАЦИЯ */
+        .nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .nav-btn {
+            background: linear-gradient(135deg, #2a3b55, #1a2a40);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+            min-width: 90px;
+            text-align: center;
+        }
+        .nav-btn.active {
+            background: linear-gradient(135deg, #f0b429, #d48a1a);
+            color: #1a1a2e !important;
+        }
+        .page { display: none; }
+        .page.active-page { display: block; }
+
+        /* ЦЕЛЬ */
+        .goal-panel {
+            background: linear-gradient(135deg, #ffd700, #ff6600);
+            border-radius: 28px;
+            padding: 16px;
+            margin-bottom: 16px;
+            text-align: center;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,215,0,0.7); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(255,215,0,0); }
+            100% { transform: scale(1); }
+        }
         .goal-amount { font-size: 1.6rem; font-weight: bold; }
         .goal-reward { font-size: 0.9rem; background: rgba(0,0,0,0.3); display: inline-block; padding: 4px 12px; border-radius: 40px; margin-top: 6px; }
-        .location-bar, .stat-card, .upgrade-card, .donate-section, .missions-panel, .daily-card, .top-donors, .active-boosts-panel, .calendar-panel, .referral-panel { background: rgba(0,0,0,0.5); border-radius: 28px; padding: 12px; margin-bottom: 12px; border: 1px solid rgba(255,215,0,0.25); }
-        .location-name { font-size: 1.3rem; font-weight: bold; text-align: center; }
-        .location-progress, .location-percent { font-size: 0.8rem; text-align: center; margin-top: 4px; }
-        .location-percent { font-size: 1rem; font-weight: bold; color: #ffd966; }
-        .secretary-area { background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(30,20,50,0.6)); border-radius: 60px; padding: 12px 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255,200,100,0.3); }
-        .secretary-avatar { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(145deg, #ffd89b, #c7a252); box-shadow: 0 0 0 3px #ffd966; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
-        .secretary-text { flex: 1; font-size: 0.85rem; background: rgba(0,0,0,0.6); padding: 10px 14px; border-radius: 35px; border-left: 3px solid #ffd966; }
+
+        .location-bar {
+            background: rgba(0,0,0,0.5);
+            border-radius: 28px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255,215,0,0.25);
+            text-align: center;
+        }
+        .location-name { font-size: 1.3rem; font-weight: bold; }
+        .location-progress { font-size: 0.8rem; margin-top: 4px; }
+        .location-percent { font-size: 1rem; font-weight: bold; color: #ffd966; margin-top: 4px; }
+
+        /* СЕКРЕТАРША С ТВОЕЙ КАРТИНКОЙ */
+        .secretary-area {
+            background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(30,20,50,0.6));
+            border-radius: 60px;
+            padding: 12px 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            border: 1px solid rgba(255,200,100,0.3);
+            text-align: center;
+            flex-wrap: wrap;
+        }
+        .secretary-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #ffd89b, #c7a252);
+            box-shadow: 0 0 0 3px #ffd966;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .secretary-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .secretary-text {
+            flex: 1;
+            font-size: 0.9rem;
+            font-weight: bold;
+            background: rgba(0,0,0,0.6);
+            padding: 10px 14px;
+            border-radius: 35px;
+            border-left: 3px solid #ffd966;
+            text-align: center;
+        }
+
         .stats { display: flex; gap: 12px; margin-bottom: 20px; }
-        .stat-card { flex: 1; text-align: center; }
+        .stat-card {
+            background: rgba(0,0,0,0.5);
+            border-radius: 28px;
+            padding: 10px;
+            flex: 1;
+            text-align: center;
+            border: 1px solid rgba(255,215,0,0.25);
+        }
         .stat-card .value { font-size: 1.6rem; font-weight: bold; }
-        .tap-area { background: radial-gradient(circle at 30% 20%, rgba(255,200,100,0.15), rgba(0,0,0,0.6)); margin: 15px 0; border-radius: 80px; padding: 20px; text-align: center; cursor: pointer; transition: transform 0.05s linear; border: 2px solid rgba(255,215,0,0.5); }
+
+        .tap-area {
+            background: radial-gradient(circle at 30% 20%, rgba(255,200,100,0.15), rgba(0,0,0,0.6));
+            margin: 15px 0;
+            border-radius: 80px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid rgba(255,215,0,0.5);
+            transition: transform 0.05s;
+        }
         .tap-area:active { transform: scale(0.97); }
         .coin-image { font-size: 5rem; display: flex; justify-content: center; }
-        .per-tap { background: rgba(0,0,0,0.7); display: inline-block; padding: 4px 20px; border-radius: 50px; margin-top: 8px; font-size: 0.9rem; }
+        .per-tap { background: rgba(0,0,0,0.7); display: inline-block; padding: 4px 20px; border-radius: 50px; margin-top: 8px; }
         .energy-bar-container { background: #1e2a3a; border-radius: 20px; height: 8px; margin-top: 12px; overflow: hidden; }
         .energy-fill { background: linear-gradient(90deg, #7bc5f9, #3a8fd4); width: 100%; height: 100%; transition: width 0.2s; }
-        .upgrades-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0; }
-        .upgrade-card { text-align: center; padding: 10px; }
+
+        .upgrades-list { display: flex; flex-direction: column; gap: 12px; }
+        .upgrade-card {
+            background: rgba(0,0,0,0.5);
+            border-radius: 28px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,215,0,0.25);
+            flex-wrap: wrap;
+        }
+        .upgrade-info { display: flex; align-items: center; gap: 12px; }
         .upgrade-icon { font-size: 1.8rem; }
-        .upgrade-name { font-weight: bold; font-size: 0.8rem; }
-        .upgrade-price { font-size: 0.8rem; margin: 5px 0; }
-        button { background: linear-gradient(135deg, #2a3b55, #1a2a40); border: none; padding: 6px; border-radius: 40px; font-weight: bold; cursor: pointer; width: 100%; }
+        .upgrade-name { font-weight: bold; }
+        .upgrade-price { color: #ffd966; font-weight: bold; }
+
+        button {
+            background: linear-gradient(135deg, #2a3b55, #1a2a40);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
         button:active { transform: scale(0.97); }
-        .inventory-btn { background: linear-gradient(135deg, #4c9aff, #2a5a9a); margin-bottom: 12px; padding: 10px; font-size: 1rem; }
         .donate-buttons { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 10px 0; }
         .donate-btn { background: #f0b429; width: auto; padding: 6px 12px; }
+        .inventory-item {
+            background: #1a1a2e;
+            border-radius: 28px;
+            padding: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .referral-link { background: #0a0f1e; padding: 8px; border-radius: 16px; font-size: 0.7rem; word-break: break-all; margin: 8px 0; cursor: pointer; }
+        .copy-btn { background: #4c9aff; padding: 6px 12px; border-radius: 20px; width: auto; }
+        .referral-stats { display: flex; justify-content: space-between; margin-top: 8px; }
         .active-boosts-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
         .active-boost-item { background: #2a3a55; border-radius: 20px; padding: 5px 10px; font-size: 0.7rem; }
+        .top-donors-list { margin-top: 8px; }
+        .donor-item { background: #2a3a55; border-radius: 20px; padding: 5px 10px; margin-bottom: 4px; }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; font-size: 0.7rem; text-align: center; }
         .calendar-day { background: #0a0f1e; padding: 6px 2px; border-radius: 12px; cursor: pointer; }
         .calendar-day.claimed { background: #2a5a3a; opacity: 0.6; cursor: default; }
         .calendar-day.today { border: 2px solid #ffd966; box-shadow: 0 0 8px gold; }
-        .referral-link { background: #0a0f1e; padding: 8px; border-radius: 16px; font-size: 0.7rem; word-break: break-all; margin: 8px 0; cursor: pointer; }
-        .referral-stats { display: flex; justify-content: space-between; margin-top: 8px; }
-        .copy-btn { background: #4c9aff; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; width: auto; }
-        .mission-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(255,215,0,0.2); }
-        .toast-notification { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1a1a2ecc; backdrop-filter: blur(10px); padding: 12px 24px; border-radius: 40px; z-index: 2000; animation: fadeUp 3s forwards; border: 1px solid #ffd966; text-align: center; font-size: 0.9rem; }
-        @keyframes fadeUp { 0% { opacity: 0; transform: translateX(-50%) translateY(20px); } 15% { opacity: 1; transform: translateX(-50%) translateY(0); } 85% { opacity: 1; } 100% { opacity: 0; transform: translateX(-50%) translateY(-20px); } }
-        .floating-number { position: fixed; font-size: 1.5rem; font-weight: bold; color: #ffd966; pointer-events: none; animation: floatUp 0.6s forwards; z-index: 1000; }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-60px) scale(1.3); } }
-        @keyframes locationFlash { 0% { transform: scale(0.5); opacity: 0; filter: blur(20px); } 20% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); } }
-        @keyframes sparks { 0% { transform: translate(0,0) scale(1); opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; } }
-        .location-flash { animation: locationFlash 0.8s cubic-bezier(0.34,1.2,0.64,1) forwards; }
-        .spark { position: fixed; width: 8px; height: 8px; background: radial-gradient(circle, #ffd700, #ff6600); border-radius: 50%; pointer-events: none; z-index: 2000; animation: sparks 0.6s ease-out forwards; }
+        .mission-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,215,0,0.2); flex-wrap: wrap; gap: 8px; }
+        .saper-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin: 12px 0;
+        }
+        .saper-cell {
+            aspect-ratio: 1;
+            background: #1a1a2e;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+        .saper-cell.opened { background: #2a3a55; cursor: default; }
+        .toast-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a2ecc;
+            backdrop-filter: blur(10px);
+            padding: 12px 24px;
+            border-radius: 40px;
+            z-index: 2000;
+            animation: fadeUp 3s forwards;
+            border: 1px solid #ffd966;
+        }
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            85% { opacity: 1; }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+        }
+        .floating-number {
+            position: fixed;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffd966;
+            pointer-events: none;
+            animation: floatUp 0.6s forwards;
+            z-index: 1000;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-60px) scale(1.3); }
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(12px);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #0f1422ee;
+            border-radius: 48px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            border: 2px solid #ffd966;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 <div class="game-container">
-    <div class="goal-panel">
-        <div class="goal-amount">30,000,000,000 💎</div>
-        <div class="goal-reward">💰 НАГРАДА: 200 TON ≈ 140,000 ₽</div>
-        <div id="goalProgress" style="font-size:0.7rem; margin-top:6px;">0%</div>
+    <!-- НАВИГАЦИЯ -->
+    <div class="nav">
+        <button class="nav-btn" data-page="main">💎 ГЛАВНАЯ</button>
+        <button class="nav-btn" data-page="upgrades">📈 УЛУЧШЕНИЯ</button>
+        <button class="nav-btn" data-page="donate">💰 ДОНАТЫ</button>
+        <button class="nav-btn" data-page="profile">👤 ПРОФИЛЬ</button>
+        <button class="nav-btn" data-page="daily">📅 ЕЖЕДНЕВНОЕ</button>
     </div>
-    <div class="location-bar" id="locationBar">
-        <div class="location-name" id="locationName">🏢 ОФИСНЫЙ ЭТАЖ</div>
-        <div class="location-progress" id="locationProgress">💎 0 / 50,000</div>
-        <div class="location-percent" id="locationPercent">0% завершено</div>
-    </div>
-    <div class="secretary-area">
-        <div class="secretary-avatar"><a href="https://image.cdn2.seaart.me/2024-01-31/cmsvvqde878c73965140/a4e2ae43dedb4d0503cb06bcb9b7a35759fd1ce1_high.webp"></a></div>
-        <div class="secretary-text" id="secretaryQuote">💎 Нажми на алмаз, богатство ждёт!</div>
-    </div>
-    <div class="stats">
-        <div class="stat-card"><span>АЛМАЗЫ</span><div class="value" id="coinAmount">0</div></div>
-        <div class="stat-card"><span>ЭНЕРГИЯ</span><div class="value" id="energyAmount">100</div></div>
-    </div>
-    <div class="tap-area" id="tapButton">
-        <div class="coin-image">💎</div>
-        <div class="per-tap">+<span id="tapPower">1</span> за тап</div>
-        <div class="energy-bar-container"><div class="energy-fill" id="energyFill"></div></div>
-    </div>
-    <div class="active-boosts-panel">
-        <strong>✨ АКТИВНЫЕ БУСТЫ</strong>
-        <div id="activeBoostsList" class="active-boosts-grid">Нет активных бустов</div>
-    </div>
-    <div class="referral-panel">
-        <strong>👥 РЕФЕРАЛЬНАЯ СИСТЕМА</strong>
-        <div class="referral-link" id="referralLink">Загрузка...</div>
-        <button id="copyReferralBtn" class="copy-btn">📋 КОПИРОВАТЬ ССЫЛКУ</button>
-        <div class="referral-stats">
-            <span>👥 Рефералов: <span id="referralCount">0</span></span>
-            <span>🎁 Бонусов получено: <span id="referralBonus">0</span>💎</span>
+
+    <!-- СТРАНИЦА: ГЛАВНАЯ -->
+    <div id="page-main" class="page active-page">
+        <div class="goal-panel">
+            <div class="goal-amount">30,000,000,000 💎</div>
+            <div class="goal-reward">💰 НАГРАДА: 200 TON ≈ 140,000 ₽</div>
+            <div id="goalProgress" style="font-size:0.7rem; margin-top:6px;">0%</div>
         </div>
-        <div style="font-size:0.65rem; margin-top:6px;">💡 Пригласи друга → +500💎 и Колба x2!</div>
-    </div>
-    <button id="openInventoryBtn" class="inventory-btn">📦 ИНВЕНТАРЬ</button>
-    <div class="missions-panel">
-        <strong>🌟 ЕЖЕДНЕВНЫЕ МИССИИ</strong>
-        <div id="missionsList"></div>
-        <div id="missionsResetTimer" class="reset-timer">⏰ Новые миссии через: --:--:--</div>
-    </div>
-    <div class="upgrades-grid">
-        <div class="upgrade-card"><div class="upgrade-icon">💪</div><div class="upgrade-name">Сила тапа +1</div><div class="upgrade-price" id="tapPrice">60 💎</div><button id="upgradeTap">Купить</button></div>
-        <div class="upgrade-card"><div class="upgrade-icon">🔋</div><div class="upgrade-name">Энергия +10</div><div class="upgrade-price" id="energyPrice">140 💎</div><button id="upgradeEnergy">Купить</button></div>
-        <div class="upgrade-card"><div class="upgrade-icon">🤖</div><div class="upgrade-name">Автокликер</div><div class="upgrade-price" id="autoPrice">500 💎</div><button id="buyAuto">Купить</button></div>
-        <div class="upgrade-card"><div class="upgrade-icon">✨</div><div class="upgrade-name">Крит x3</div><div class="upgrade-price" id="critPrice">1000 💎</div><button id="buyCrit">Купить</button></div>
-    </div>
-    <div class="calendar-panel">
-        <strong>📅 ЕЖЕМЕСЯЧНЫЕ НАГРАДЫ</strong>
-        <div id="calendarGrid" class="calendar-grid"></div>
-        <div id="dailyTimerText" style="text-align:center; margin-top:8px;">🎁 Доступно</div>
-    </div>
-    <div class="donate-section">
-        <strong>💎 ДОНАТЫ ЗА TON</strong>
-        <div class="donate-buttons">
-            <button class="donate-btn" data-ton="0.5" data-boost="x2">0.5 TON (x2 10мин)</button>
-            <button class="donate-btn" data-ton="1" data-boost="x3">1 TON (x3 30мин)</button>
-            <button class="donate-btn" data-ton="2" data-boost="noenergy">2 TON (без энергии)</button>
-            <button class="donate-btn" data-ton="5" data-boost="vip">5 TON (VIP x2)</button>
-            <button class="donate-btn" data-ton="10" data-boost="megaboost">10 TON (x5 2ч +5000💎)</button>
-            <button class="donate-btn" data-ton="20" data-boost="insta">20 TON (+50 силы +10000💎)</button>
+        <div class="location-bar">
+            <div class="location-name" id="locationName">🏢 ОФИСНЫЙ ЭТАЖ</div>
+            <div class="location-progress" id="locationProgress">💎 0 / 50,000</div>
+            <div class="location-percent" id="locationPercent">0% завершено</div>
         </div>
-        <div id="donateStatus" style="font-size:0.7rem; text-align:center; margin-top:8px;"></div>
+        <div class="secretary-area">
+            <div class="secretary-avatar"><img src="https://image.cdn2.seaart.me/2024-01-31/cmsvvqde878c73965140/a4e2ae43dedb4d0503cb06bcb9b7a35759fd1ce1_high.webp" alt="Секретарша" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"></div>
+            <div class="secretary-text" id="secretaryQuote">💎 Нажми на алмаз, богатство ждёт!</div>
+        </div>
+        <div class="stats">
+            <div class="stat-card"><span>АЛМАЗЫ</span><div class="value" id="coinAmount">0</div></div>
+            <div class="stat-card"><span>ЭНЕРГИЯ</span><div class="value" id="energyAmount">100</div></div>
+        </div>
+        <div class="tap-area" id="tapButton">
+            <div class="coin-image">💎</div>
+            <div class="per-tap">+<span id="tapPower">1</span> за тап</div>
+            <div class="energy-bar-container"><div class="energy-fill" id="energyFill"></div></div>
+        </div>
+        <div class="active-boosts-panel" style="background:rgba(0,0,0,0.5); border-radius:28px; padding:12px; margin-bottom:12px;">
+            <strong>✨ АКТИВНЫЕ БУСТЫ</strong>
+            <div id="activeBoostsList" class="active-boosts-grid">Нет активных бустов</div>
+        </div>
     </div>
-    <div class="daily-card">
-        <span>🎁 ЕЖЕДНЕВНЫЙ БОНУС</span>
-        <button id="claimDailyBtn">Забрать 100💎 + Колба x2</button>
+
+    <!-- СТРАНИЦА: УЛУЧШЕНИЯ -->
+    <div id="page-upgrades" class="page">
+        <div class="upgrades-list">
+            <div class="upgrade-card">
+                <div class="upgrade-info"><div class="upgrade-icon">💪</div><div class="upgrade-name">Сила тапа +1</div><div class="upgrade-price" id="tapPrice">60 💎</div></div>
+                <button id="upgradeTap">Купить</button>
+            </div>
+            <div class="upgrade-card">
+                <div class="upgrade-info"><div class="upgrade-icon">🔋</div><div class="upgrade-name">Энергия +10 (макс+10)</div><div class="upgrade-price" id="energyPrice">140 💎</div></div>
+                <button id="upgradeEnergy">Купить</button>
+            </div>
+            <div class="upgrade-card">
+                <div class="upgrade-info"><div class="upgrade-icon">🤖</div><div class="upgrade-name">Автокликер</div><div class="upgrade-price" id="autoPrice">500 💎</div></div>
+                <button id="buyAuto">Купить</button>
+            </div>
+            <div class="upgrade-card">
+                <div class="upgrade-info"><div class="upgrade-icon">✨</div><div class="upgrade-name">Крит x3</div><div class="upgrade-price" id="critPrice">1000 💎</div></div>
+                <button id="buyCrit">Купить</button>
+            </div>
+        </div>
     </div>
-    <div class="top-donors">
-        <strong>🏆 ТОП ДОНАТЕРОВ</strong>
-        <div id="topDonorsList">Пока никого</div>
+
+    <!-- СТРАНИЦА: ДОНАТЫ -->
+    <div id="page-donate" class="page">
+        <div class="donate-section" style="background:rgba(0,0,0,0.5); border-radius:28px; padding:12px; margin-bottom:12px;">
+            <strong>💎 ДОНАТЫ ЗА TON</strong>
+            <div class="donate-buttons">
+                <button class="donate-btn" data-ton="0.5" data-boost="x2">0.5 TON (x2 10мин)</button>
+                <button class="donate-btn" data-ton="1" data-boost="x3">1 TON (x3 30мин)</button>
+                <button class="donate-btn" data-ton="2" data-boost="noenergy">2 TON (без энергии)</button>
+                <button class="donate-btn" data-ton="5" data-boost="vip">5 TON (VIP x2)</button>
+                <button class="donate-btn" data-ton="10" data-boost="megaboost">10 TON (x5 2ч +5000💎)</button>
+                <button class="donate-btn" data-ton="20" data-boost="insta">20 TON (+50 силы +10000💎)</button>
+            </div>
+            <div id="donateStatus" style="font-size:0.7rem; text-align:center; margin-top:8px;"></div>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА: ПРОФИЛЬ -->
+    <div id="page-profile" class="page">
+        <div class="referral-panel" style="background:rgba(0,0,0,0.5); border-radius:28px; padding:12px; margin-bottom:12px;">
+            <strong>👥 РЕФЕРАЛЬНАЯ СИСТЕМА</strong>
+            <div class="referral-link" id="referralLink">Загрузка...</div>
+            <button id="copyReferralBtn" class="copy-btn">📋 КОПИРОВАТЬ ССЫЛКУ</button>
+            <div class="referral-stats">
+                <span>👥 Рефералов: <span id="referralCount">0</span></span>
+                <span>🎁 Бонусов: <span id="referralBonus">0</span>💎</span>
+            </div>
+        </div>
+        <button id="openInventoryBtn" class="inventory-btn" style="width:100%; margin-bottom:12px;">📦 ИНВЕНТАРЬ</button>
+        <div class="top-donors" style="background:rgba(0,0,0,0.5); border-radius:28px; padding:12px; margin-bottom:12px;">
+            <strong>🏆 ТОП ДОНАТЕРОВ</strong>
+            <div id="topDonorsList" class="top-donors-list">Пока никого</div>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА: ЕЖЕДНЕВНОЕ -->
+    <div id="page-daily" class="page">
+        <div class="calendar-panel" style="background:rgba(0,0,0,0.5); border-radius:28px; padding:12px; margin-bottom:12px;">
+            <strong>📅 ЕЖЕМЕСЯЧНЫЕ НАГРАДЫ</strong>
+            <div id="calendarGrid" class="calendar-grid"></div>
+            <div id="dailyTimerText" style="text-align:center; margin-top:8px;">🎁 Доступно</div>
+        </div>
+        <div class="missions-panel" style="background:rgba(0,0,0,0.5); border-radius:28px; padding:12px; margin-bottom:12px;">
+            <strong>🌟 ЕЖЕДНЕВНЫЕ МИССИИ</strong>
+            <div id="missionsList"></div>
+            <div id="missionsResetTimer" class="reset-timer" style="font-size:0.7rem; text-align:center; margin-top:8px;">⏰ Новые миссии через: --:--:--</div>
+        </div>
+        <div class="daily-card" style="background:rgba(0,0,0,0.5); border-radius:28px; padding:12px; margin-bottom:12px;">
+            <span>🎁 ЕЖЕДНЕВНЫЙ БОНУС</span>
+            <button id="claimDailyBtn" style="margin-top:8px;">Забрать 100💎 + Колба x2</button>
+        </div>
+        <div class="saper-panel" style="background:rgba(0,0,0,0.5); border-radius:28px; padding:12px; margin-bottom:12px;">
+            <strong>💣 ЕЖЕДНЕВНЫЙ САПЁР 💎</strong>
+            <div id="saperStatus" style="font-size:0.8rem; margin:8px 0;">🎲 Найди алмазы, не наступи на мину!</div>
+            <div class="saper-grid" id="saperGrid"></div>
+            <div id="saperTimer" class="saper-timer" style="font-size:0.8rem; text-align:center;">⏳ Доступно сейчас!</div>
+        </div>
     </div>
 </div>
-<div id="inventoryModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(12px); z-index:3000; justify-content:center; align-items:center;">
-    <div style="background:#0f1422ee; border-radius:48px; padding:24px; max-width:400px; width:90%; border:2px solid #ffd966; text-align:center;">
+
+<!-- МОДАЛКА ИНВЕНТАРЯ -->
+<div id="inventoryModal" class="modal">
+    <div class="modal-content">
         <h3>📦 ИНВЕНТАРЬ</h3>
         <div id="modalInventoryList"></div>
         <button id="closeInventoryModal" style="background:#ff5555; margin-top:16px; padding:8px; border-radius:40px;">ЗАКРЫТЬ</button>
     </div>
 </div>
+
 <script>
     // ========== API CRYPTO PAY ==========
     const CRYPTO_PAY_TOKEN = "566599:AAdZJg2Mui9HCJ0MywGDldEu7Zxygy9ifPm";
@@ -171,7 +454,7 @@
             return false;
         } catch(e) { return false; }
     }
-    
+
     // ========== ОСНОВНЫЕ ПЕРЕМЕННЫЕ ==========
     let userNickname = localStorage.getItem('userNickname');
     if(!userNickname) { userNickname = prompt("Введите ваш Telegram никнейм:", "@username") || "Игрок"; localStorage.setItem('userNickname', userNickname); }
@@ -319,20 +602,6 @@
     }
     
     // ========== ЛОКАЦИИ ==========
-    function createSparkles(x, y) {
-        for(let i=0;i<30;i++) {
-            let spark = document.createElement('div');
-            spark.className = 'spark';
-            let angle = Math.random() * Math.PI * 2;
-            let distance = 50 + Math.random() * 100;
-            spark.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
-            spark.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
-            spark.style.left = (x + (Math.random()-0.5)*100) + 'px';
-            spark.style.top = (y + (Math.random()-0.5)*100) + 'px';
-            document.body.appendChild(spark);
-            setTimeout(()=>spark.remove(),600);
-        }
-    }
     function checkLocationUnlock() {
         let currentIndex = 0;
         for(let i=0;i<LOCATIONS.length;i++) if(coins >= LOCATIONS[i].need) currentIndex = i;
@@ -342,19 +611,13 @@
                 localStorage.setItem(flag,'true');
                 let loc = LOCATIONS[i];
                 if(loc.bonus > 0) coins += loc.bonus;
-                let bar = document.getElementById('locationBar');
-                bar.classList.remove('location-flash');
-                void bar.offsetWidth;
-                bar.classList.add('location-flash');
-                let rect = bar.getBoundingClientRect();
-                createSparkles(rect.left+rect.width/2, rect.top+rect.height/2);
                 showToast(`🔥 НОВАЯ ЛОКАЦИЯ: ${loc.name}! +${loc.bonus.toLocaleString()}💎`, false);
                 saveAll(); updateUI();
             }
         }
     }
     
-    // ========== МИССИИ (ФИКС) ==========
+    // ========== МИССИИ ==========
     let dailyMissions = [];
     let lastMissionReset = localStorage.getItem('lastMissionReset') || '';
     
@@ -402,7 +665,7 @@
         }
     }
     
-    // ========== КАЛЕНДАРЬ (ФИКС) ==========
+    // ========== КАЛЕНДАРЬ ==========
     let calendarClaimed = JSON.parse(localStorage.getItem('calendarClaimed') || '{}');
     let calendarMonth = localStorage.getItem('calendarMonth') || '';
     
@@ -427,6 +690,89 @@
         updateUI();
     }
     
+    // ========== САПЁР ==========
+    let saperAvailable = true;
+    let saperLastPlay = parseInt(localStorage.getItem('saperLastPlay') || '0');
+    let saperField = [];
+    
+    function initSaper() {
+        let now = Date.now();
+        if(now - saperLastPlay < 86400000) {
+            saperAvailable = false;
+            let hoursLeft = Math.ceil((86400000 - (now - saperLastPlay)) / 3600000);
+            document.getElementById('saperTimer').innerHTML = `⏳ Доступно через: ${hoursLeft}ч`;
+            document.getElementById('saperStatus').innerHTML = '🎲 Приходи завтра!';
+        } else {
+            saperAvailable = true;
+            document.getElementById('saperTimer').innerHTML = '🎲 Доступно сейчас!';
+            document.getElementById('saperStatus').innerHTML = '🎲 Найди алмазы, не наступи на мину!';
+        }
+        generateSaperField();
+        renderSaperGrid();
+    }
+    
+    function generateSaperField() {
+        saperField = [];
+        for(let i=0; i<25; i++) saperField.push({ type: 'gem', opened: false });
+        let mines = 0;
+        while(mines < 5) {
+            let idx = Math.floor(Math.random() * 25);
+            if(saperField[idx].type !== 'mine') {
+                saperField[idx].type = 'mine';
+                mines++;
+            }
+        }
+    }
+    
+    function renderSaperGrid() {
+        let grid = document.getElementById('saperGrid');
+        if(!grid) return;
+        grid.innerHTML = '';
+        for(let i=0; i<25; i++) {
+            let cell = document.createElement('div');
+            cell.className = 'saper-cell';
+            if(saperField[i].opened) {
+                cell.classList.add('opened');
+                cell.innerHTML = saperField[i].type === 'mine' ? '💣' : '💎';
+                if(saperField[i].type === 'mine') cell.style.background = '#ff4444';
+                else cell.style.background = '#ffd966';
+            } else {
+                cell.innerHTML = '❓';
+            }
+            if(saperAvailable && !saperField[i].opened) {
+                cell.onclick = () => openSaperCell(i);
+            }
+            grid.appendChild(cell);
+        }
+    }
+    
+    function openSaperCell(idx) {
+        if(!saperAvailable) { showToast("Игра доступна раз в сутки!", true); return; }
+        if(saperField[idx].opened) return;
+        saperField[idx].opened = true;
+        if(saperField[idx].type === 'mine') {
+            showToast("💣 БАХ! Ты наступил на мину! Алмазов нет.", true);
+            saperAvailable = false;
+            saperLastPlay = Date.now();
+            localStorage.setItem('saperLastPlay', saperLastPlay);
+            initSaper();
+        } else {
+            let reward = 100;
+            addCoins(reward);
+            showToast(`💎 Ты нашёл алмаз! +${reward}💎`, false);
+            let allOpened = saperField.every(cell => cell.opened || cell.type === 'mine');
+            if(allOpened) {
+                showToast("🎉 Ты собрал все алмазы! Молодец!", false);
+                saperAvailable = false;
+                saperLastPlay = Date.now();
+                localStorage.setItem('saperLastPlay', saperLastPlay);
+                initSaper();
+            }
+        }
+        renderSaperGrid();
+        if(!saperAvailable) initSaper();
+    }
+    
     // ========== СОХРАНЕНИЕ ==========
     function saveAll() {
         localStorage.setItem('coins', coins);
@@ -447,6 +793,17 @@
         localStorage.setItem('topDonorsAggregated', JSON.stringify(topDonors));
         localStorage.setItem('activeInvoices', JSON.stringify(activeInvoices));
     }
+    
+    // ========== НАВИГАЦИЯ ==========
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            let page = btn.dataset.page;
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+            document.getElementById(`page-${page}`).classList.add('active-page');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
     
     // ========== ОБНОВЛЕНИЕ UI ==========
     function updateUI() {
@@ -478,11 +835,11 @@
         document.getElementById('referralCount').innerHTML = referralCount;
         document.getElementById('referralBonus').innerHTML = referralBonus;
         
-        let topHtml = topDonors.slice(0,5).map(d => `<div>👤 ${d.name} — ${d.totalTon} TON</div>`).join('');
+        let topHtml = topDonors.slice(0,5).map(d => `<div class="donor-item">👤 ${d.name} — ${d.totalTon} TON</div>`).join('');
         document.getElementById('topDonorsList').innerHTML = topHtml || "Пока никого";
         
         let invHtml = '';
-        for(let item of inventory) if(item.amount > 0) invHtml += `<div style="background:#1a1a2e; border-radius:28px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between;"><span>${item.icon} ${item.name} x${item.amount}</span><button class="use-boost" data-id="${item.id}" style="width:auto; padding:4px 12px;">Использовать</button></div>`;
+        for(let item of inventory) if(item.amount > 0) invHtml += `<div class="inventory-item"><span>${item.icon} ${item.name} x${item.amount}</span><button class="use-boost" data-id="${item.id}">Использовать</button></div>`;
         document.getElementById('modalInventoryList').innerHTML = invHtml || 'Пусто';
         document.querySelectorAll('.use-boost').forEach(btn => btn.onclick = () => { useBoost(btn.dataset.id); updateUI(); });
         
@@ -512,6 +869,13 @@
             let seconds = Math.floor((resetTimeLeft % 60000) / 1000);
             document.getElementById('missionsResetTimer').innerHTML = `⏰ Новые миссии через: ${hours}ч ${minutes}м ${seconds}с`;
         } else { document.getElementById('missionsResetTimer').innerHTML = `🔄 Генерация новых миссий...`; initMissions(); }
+        
+        let lastDaily = parseInt(localStorage.getItem('lastDailyRewardTime') || '0');
+        let dailyTimeLeft = 86400000 - (Date.now() - lastDaily);
+        if(dailyTimeLeft > 0) {
+            let hours = Math.floor(dailyTimeLeft / 3600000);
+            document.getElementById('dailyTimerText').innerHTML = `🎁 Через ${hours}ч`;
+        } else { document.getElementById('dailyTimerText').innerHTML = `🎁 Доступно!`; }
     }
     
     // ========== ОБРАБОТЧИКИ ==========
@@ -519,7 +883,9 @@
     document.getElementById('upgradeEnergy').onclick = () => { let p = getEnergyPrice(); if(coins >= p) { coins -= p; maxEnergy += 10; currentEnergy += 10; energyLevel++; updateMissionProgress('upgrade', 1); saveAll(); updateUI(); showToast(`🔋 Энергия +10!`, false); } else showToast("Не хватает!", true); };
     document.getElementById('buyAuto').onclick = () => { if(!hasAutoClicker && coins >= AUTO_CLICKER_PRICE) { coins -= AUTO_CLICKER_PRICE; hasAutoClicker = true; updateMissionProgress('upgrade', 1); saveAll(); updateUI(); showToast("🤖 Автокликер активирован!", false); } else showToast("Не хватает или уже куплен!", true); };
     document.getElementById('buyCrit').onclick = () => { if(!hasCrit && coins >= CRIT_PRICE) { coins -= CRIT_PRICE; hasCrit = true; updateMissionProgress('upgrade', 1); saveAll(); updateUI(); showToast("✨ Крит x3 активирован!", false); } else showToast("Не хватает или уже куплен!", true); };
+    
     document.getElementById('tapButton').onclick = (e) => { let add = getCurrentTapPower(); if(hasCrit && Math.random()<0.2) add *= 3; if(spendEnergy(1)) { addCoins(add); updateMissionProgress('tap', 1); let rect = e.target.closest('.tap-area').getBoundingClientRect(); let div = document.createElement('div'); div.className = 'floating-number'; div.innerText = `+${Math.floor(add)}`; div.style.left = (rect.left+rect.width/2)+'px'; div.style.top = (rect.top+rect.height/2)+'px'; document.body.appendChild(div); setTimeout(()=>div.remove(),600); updateUI(); } else showToast("Нет энергии!", true); };
+    
     document.getElementById('copyReferralBtn').onclick = () => { navigator.clipboard.writeText(getReferralLink()); showToast("📋 Реферальная ссылка скопирована!", false); };
     document.getElementById('openInventoryBtn').onclick = () => { updateUI(); document.getElementById('inventoryModal').style.display = 'flex'; };
     document.getElementById('closeInventoryModal').onclick = () => { document.getElementById('inventoryModal').style.display = 'none'; };
@@ -557,6 +923,7 @@
     
     initMissions();
     checkReferral();
+    initSaper();
     updateUI();
 </script>
 </body>
