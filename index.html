@@ -313,6 +313,12 @@
             color: #1a1a2e !important;
             padding: 4px 12px;
         }
+        .donate-redirect-btn {
+            background: linear-gradient(135deg, #ff6600, #ff3300);
+            margin-top: 10px;
+            padding: 12px;
+            font-size: 1.1rem;
+        }
     </style>
 </head>
 <body>
@@ -391,6 +397,7 @@
                 <button class="donate-btn" data-ton="10" data-boost="megaboost">10 TON (x5 2ч +5000💎)</button>
                 <button class="donate-btn" data-ton="20" data-boost="insta">20 TON (+50 силы +10000💎)</button>
             </div>
+            <button id="openDonatePageBtn" class="donate-redirect-btn" style="width:100%; margin-top:15px;">🚀 ПЕРЕЙТИ К ОПЛАТЕ</button>
             <div id="donateStatus" style="font-size:0.7rem; text-align:center; margin-top:8px;"></div>
         </div>
     </div>
@@ -445,54 +452,6 @@
 </div>
 
 <script>
-    // ========== API CRYPTO PAY С ПЕРЕНАПРАВЛЕНИЕМ ==========
-    const CRYPTO_PAY_TOKEN = "566599:AAdZJg2Mui9HCJ0MywGDldEu7Zxygy9ifPm";
-    
-    async function createInvoice(amountTON, boostType) {
-        try {
-            const response = await fetch('https://api.crypt.bot/v2/createInvoice', {
-                method: 'POST',
-                headers: { 
-                    'Crypto-Pay-API-Token': CRYPTO_PAY_TOKEN, 
-                    'Content-Type': 'application/json' 
-                },
-                body: JSON.stringify({ 
-                    asset: 'TON', 
-                    amount: amountTON, 
-                    description: `${amountTON} TON - ${boostType}` 
-                })
-            });
-            const data = await response.json();
-            if(data.ok && data.result) {
-                return { 
-                    success: true, 
-                    invoiceId: data.result.invoice_id, 
-                    payUrl: data.result.pay_url 
-                };
-            }
-            return { success: false, error: data };
-        } catch(e) { 
-            console.error("Create invoice error:", e);
-            return { success: false, error: e.message }; 
-        }
-    }
-
-    async function checkInvoice(invoiceId) {
-        try {
-            const response = await fetch(`https://api.crypt.bot/v2/getInvoices?invoice_ids=${invoiceId}`, {
-                headers: { 'Crypto-Pay-API-Token': CRYPTO_PAY_TOKEN }
-            });
-            const data = await response.json();
-            if(data.ok && data.result && data.result.length > 0) {
-                return data.result[0].status === 'paid';
-            }
-            return false;
-        } catch(e) { 
-            console.error("Check invoice error:", e);
-            return false; 
-        }
-    }
-
     // ========== ОСНОВНЫЕ ПЕРЕМЕННЫЕ ==========
     let userNickname = localStorage.getItem('userNickname');
     if(!userNickname) { userNickname = prompt("Введите ваш Telegram никнейм:", "@username") || "Игрок"; localStorage.setItem('userNickname', userNickname); }
@@ -941,86 +900,19 @@
     document.getElementById('closeInventoryModal').onclick = () => { document.getElementById('inventoryModal').style.display = 'none'; };
     document.getElementById('claimDailyBtn').onclick = () => { let last = parseInt(localStorage.getItem('lastDailyRewardTime') || '0'); let now = Date.now(); if(now - last < 86400000) { let hours = Math.ceil((86400000 - (now - last)) / 3600000); showToast(`⏳ Через ${hours} часов!`, true); return; } localStorage.setItem('lastDailyRewardTime', now); addCoins(500); addBoostToInventory('x2', 'Колба x2', 600, '🧪'); showToast("🎁 500💎 + Колба x2!", false); updateUI(); };
     
-    // ========== ДОНАТЫ С ПРЯМЫМ ПЕРЕНАПРАВЛЕНИЕМ ==========
-    document.querySelectorAll('.donate-btn').forEach(btn => {
-        btn.onclick = async () => {
-            let ton = parseFloat(btn.dataset.ton);
-            let boost = btn.dataset.boost;
-            
-            btn.disabled = true;
-            const originalText = btn.innerText;
-            btn.innerText = "⏳ СОЗДАЁМ СЧЁТ...";
-            
-            showToast(`🔄 Создаём счёт на ${ton} TON...`, false);
-            
-            try {
-                let inv = await createInvoice(ton, boost);
-                
-                if(inv.success && inv.payUrl) {
-                    showToast(`✅ Счёт создан! Перенаправление...`, false);
-                    
-                    // Сохраняем информацию о платеже для проверки после возврата
-                    localStorage.setItem('pendingDonation', JSON.stringify({
-                        ton: ton,
-                        boost: boost,
-                        invoiceId: inv.invoiceId,
-                        timestamp: Date.now()
-                    }));
-                    
-                    // ПРЯМОЕ ПЕРЕНАПРАВЛЕНИЕ НА СТРАНИЦУ ОПЛАТЫ
-                    setTimeout(() => {
-                        window.location.href = inv.payUrl;
-                    }, 500);
-                    
-                } else {
-                    showToast(`❌ Ошибка: ${inv.error || 'Не удалось создать счёт'}`, true);
-                    btn.disabled = false;
-                    btn.innerText = originalText;
-                }
-            } catch(error) {
-                console.error("Donation error:", error);
-                showToast(`❌ Ошибка: ${error.message}`, true);
-                btn.disabled = false;
-                btn.innerText = originalText;
-            }
-        };
-    });
+    // Кнопка перехода на отдельную страницу донатов
+    document.getElementById('openDonatePageBtn').onclick = () => {
+        window.location.href = 'donate.html';
+    };
     
-    // ========== ПРОВЕРКА ВОЗВРАТА ПОСЛЕ ОПЛАТЫ ==========
-    async function checkReturnFromPayment() {
-        const pending = localStorage.getItem('pendingDonation');
-        if (pending) {
-            const data = JSON.parse(pending);
-            // Проверяем, не прошло ли больше 10 минут
-            if (Date.now() - data.timestamp > 600000) {
-                localStorage.removeItem('pendingDonation');
-                return;
-            }
-            
-            showToast(`💰 Проверяем статус платежа ${data.ton} TON...`, false);
-            
-            const checkInterval = setInterval(async () => {
-                try {
-                    const isPaid = await checkInvoice(data.invoiceId);
-                    if (isPaid) {
-                        clearInterval(checkInterval);
-                        giveDonationBonus(data.ton, data.boost);
-                        localStorage.removeItem('pendingDonation');
-                        showToast(`✅ Донат ${data.ton} TON подтверждён! Бонусы начислены!`, false);
-                        updateUI();
-                    }
-                } catch(e) {
-                    console.error("Check error:", e);
-                }
-            }, 3000);
-            
-            // Останавливаем проверку через 5 минут
-            setTimeout(() => {
-                clearInterval(checkInterval);
-                if (localStorage.getItem('pendingDonation')) {
-                    showToast(`⚠️ Не удалось подтвердить платеж. Свяжитесь с поддержкой.`, true);
-                }
-            }, 300000);
+    // Обработка бонусов после возврата со страницы донатов
+    function checkDonationBonuses() {
+        const bonuses = JSON.parse(localStorage.getItem('donationBonuses') || '[]');
+        if (bonuses.length > 0) {
+            showToast(`🎁 Получено ${bonuses.length} бонусов!`, false);
+            bonuses.forEach(bonus => giveDonationBonus(bonus.ton, bonus.boostType));
+            localStorage.removeItem('donationBonuses');
+            updateUI();
         }
     }
     
@@ -1031,7 +923,7 @@
     initMissions();
     checkReferral();
     initSaper();
-    checkReturnFromPayment(); // Проверяем, не вернулись ли с оплаты
+    checkDonationBonuses();
     updateUI();
 </script>
 </body>
